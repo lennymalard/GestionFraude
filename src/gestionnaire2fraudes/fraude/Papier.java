@@ -1,6 +1,6 @@
 package gestionnaire2fraudes.fraude;
 
-import gestionnaire2fraudes.util.Tuple;
+import gestionnaire2fraudes.utils.Tuple;
 
 import java.time.LocalDateTime;
 

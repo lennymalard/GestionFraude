@@ -1,4 +1,4 @@
-package gestionnaire2fraudes.util;
+package gestionnaire2fraudes.utils;
 
 public class Tuple {
     Object element1;
