@@ -8,7 +8,7 @@ public class Etudiant {
     private String prenom;
     private Cursus cursus;
 
-    Etudiant(String nom, String prenom, Cursus cursus){
+    public Etudiant(String nom, String prenom, Cursus cursus){
         this.id = numId;
         this.nom = nom;
         this.prenom = prenom;
