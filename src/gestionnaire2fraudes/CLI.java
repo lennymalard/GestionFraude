@@ -1,4 +1,4 @@
 package gestionnaire2fraudes;
 
-public class CLI {
+public interface CLI {
 }
