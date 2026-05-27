@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+
+== Modification d'un formulaire ==
+Utilisateur -> Systeme: Démarrage du programme
+activate Systeme
+Systeme -> Systeme: afficheMenuPrincipal()
+Systeme -> Utilisateur: Les différentes options sont affichées sur le terminal
+deactivate Systeme
+
+Utilisateur -> Systeme: Tape 2 dans le terminal
+activate Systeme
+loop Pour chaque fraude
+    Systeme -> Systeme : afficheDemandeNom()
+    Systeme -> Utilisateur
+    deactivate Systeme
+
+    Utilisateur->Systeme: Rentre le nom de l'étudiant
+    activate Systeme
+    Systeme -> Systeme : afficheDemandePrenom()
+    Systeme -> Utilisateur
+    deactivate Systeme
+
+    Utilisateur->Systeme: Rentre le prénom de l'étudiant
+    activate Systeme
+    Systeme -> Systeme : afficheDemandeCursus()
+    Systeme -> Utilisateur
+    deactivate Systeme
+
+    Utilisateur->Systeme: Rentre le cursus de l'étudiant
+    activate Systeme
+    Systeme -> Systeme : afficheDemandeNumApprenant()
+    Systeme -> Utilisateur
+    deactivate Systeme
+
+    Utilisateur->Systeme: Rentre le numéro apprenant de l'étudiant
+    activate Systeme
+    Systeme -> Systeme : afficheTypeFraude()
+    Systeme->Utilisateur
+    deactivate Systeme
+
+    Utilisateur->Systeme: Tape le numéro de la fraude souhaité
+    activate Systeme
+    Systeme->Systeme: remplirInfoFraude()
+    Systeme-> Formulaire: ajoutEleveFraude()
+
+    activate Formulaire
+    Formulaire->Systeme
+    deactivate Formulaire
+end
+Systeme->Formulaire: modifDateMiseAJour()
+activate Formulaire
+Formulaire->Systeme
+deactivate Formulaire
+Systeme -> Utilisateur: Formulaire modifié
+deactivate Systeme
+==Fin==
+@enduml
