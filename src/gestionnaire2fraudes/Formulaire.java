@@ -1,4 +1,61 @@
 package gestionnaire2fraudes;
 
+import java.time.LocalDate;
+
 public class Formulaire {
+    static int numId;
+
+    private int id;
+    private LocalDate dateCreation;
+    private LocalDate dateModif;
+
+    public Formulaire(int id, LocalDate dateCreation, LocalDate dateModif) {
+        this.id = id;
+        this.dateCreation = dateCreation;
+        this.dateModif = dateModif;
+    }
+
+    public Formulaire(int id) {
+        this(id, LocalDate.now(), LocalDate.now());
+    }
+
+    public Formulaire(LocalDate dateCreation, LocalDate dateModif) {
+        this(++numId, dateCreation, dateModif);
+    }
+
+    public Formulaire() {
+        this(++numId, LocalDate.now(), LocalDate.now());
+    }
+
+    public static int getNumId() {
+        return numId;
+    }
+
+    public static void setNumId(int numId) {
+        Formulaire.numId = numId;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public LocalDate getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDate dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public LocalDate getDateModif() {
+        return dateModif;
+    }
+
+    public void setDateModif(LocalDate dateModif) {
+        this.dateModif = dateModif;
+    }
 }
