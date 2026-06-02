@@ -2,7 +2,7 @@ package gestionnaire2fraudes.fraude;
 
 import java.time.LocalDateTime;
 
-public class Fraude {
+public abstract class Fraude {
     private LocalDateTime dateReleve;
     private String contenu;
     private String description;

@@ -4,11 +4,11 @@ import gestionnaire2fraudes.utils.Tuple;
 
 import java.time.LocalDateTime;
 
-public class Papier extends Fraude{
+public class FraudePapier extends Fraude{
     private Tuple dimensions;
     private boolean plie;
 
-    public Papier(LocalDateTime dateReleve, String contenu, String description, Tuple dimensions, boolean plie) {
+    public FraudePapier(LocalDateTime dateReleve, String contenu, String description, Tuple dimensions, boolean plie) {
         super(dateReleve, contenu, description);
         this.dimensions = dimensions;
         this.plie = plie;
