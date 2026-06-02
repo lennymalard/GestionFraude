@@ -21,10 +21,6 @@ public class Formulaire {
         this.dateModif = dateModif;
     }
 
-    public Formulaire(int id) {
-        this(id, LocalDate.now(), LocalDate.now());
-    }
-
     public Formulaire(LocalDate dateCreation, LocalDate dateModif) {
         this(++numId, dateCreation, dateModif);
     }

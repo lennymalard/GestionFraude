@@ -16,12 +16,13 @@ public class SystemeCLI implements CLI{
     static String[] INTERVALCURSUS = {"E1", "E2", "E3e", "E3a", "E4", "E5"};
     static Scanner scanner = new Scanner(System.in);
     String input;
+    Systeme sys = new Systeme();
 
 
     @Override
     public void start(){
         display("Démarrage du système. Veuillez patienter.");
-        Systeme sys = new Systeme();
+
         isRunning();
     }
 
