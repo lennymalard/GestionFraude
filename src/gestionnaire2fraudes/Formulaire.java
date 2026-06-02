@@ -1,6 +1,12 @@
 package gestionnaire2fraudes;
 
+import gestionnaire2fraudes.cursus.Etudiant;
+import gestionnaire2fraudes.fraude.Fraude;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class Formulaire {
     static int numId;
@@ -8,6 +14,7 @@ public class Formulaire {
     private int id;
     private LocalDate dateCreation;
     private LocalDate dateModif;
+    private HashMap<Etudiant, ArrayList<Fraude>> fraudeurs;
 
     public Formulaire(int id, LocalDate dateCreation, LocalDate dateModif) {
         this.id = id;
@@ -57,5 +64,13 @@ public class Formulaire {
 
     public void setDateModif(LocalDate dateModif) {
         this.dateModif = dateModif;
+    }
+
+    public HashMap<Etudiant, ArrayList<Fraude>> getFraudeurs() {
+        return fraudeurs;
+    }
+
+    public void setFraudeurs(HashMap<Etudiant, ArrayList<Fraude>> fraudeurs) {
+        this.fraudeurs = fraudeurs;
     }
 }
