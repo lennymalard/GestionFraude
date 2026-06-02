@@ -2,11 +2,11 @@ package gestionnaire2fraudes.fraude;
 
 import java.time.LocalDateTime;
 
-public class Calculatrice extends Fraude{
+public class FraudeCalculatrice extends Fraude{
     private String marque;
     private String programme;
 
-    public Calculatrice(LocalDateTime dateReleve, String contenu, String description, String marque, String programme) {
+    public FraudeCalculatrice(LocalDateTime dateReleve, String contenu, String description, String marque, String programme) {
         super(dateReleve, contenu, description);
         this.marque = marque;
         this.programme = programme;

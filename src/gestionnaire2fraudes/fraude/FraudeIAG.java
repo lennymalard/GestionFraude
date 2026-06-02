@@ -2,10 +2,10 @@ package gestionnaire2fraudes.fraude;
 
 import java.time.LocalDateTime;
 
-public class IAG extends Fraude {
+public class FraudeIAG extends Fraude {
     private String nomService;
 
-    public IAG(LocalDateTime dateReleve, String contenu, String description, String nomService) {
+    public FraudeIAG(LocalDateTime dateReleve, String contenu, String description, String nomService) {
         super(dateReleve, contenu, description);
         this.nomService = nomService;
     }

@@ -19,7 +19,7 @@ public class Epreuve {
         this.modalite = modalite;
     }
 
-    Epreuve(String codeUcue, int jour, int mois, int annee, int heurePassage, int minutePassage, int duree, Modalite modalite){
+    public Epreuve(String codeUcue, int jour, int mois, int annee, int heurePassage, int minutePassage, int duree, Modalite modalite){
         this(codeUcue, LocalDate.of(annee, mois, jour), LocalTime.of(heurePassage, minutePassage), Duration.ofMinutes(duree), modalite);
     }
 
