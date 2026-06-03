@@ -162,6 +162,7 @@ public class Systeme {
 
     public float calcStdFraudesFormulaire(){
         // TODO calcStdFraudesFormulaire
+        return 0;
 
     }
 

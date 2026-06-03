@@ -2,9 +2,9 @@ package gestionnaire2fraudes;
 
 import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Etudiant;
-import gestionnaire2fraudes.fraude.Calculatrice;
 import gestionnaire2fraudes.fraude.Fraude;
-import gestionnaire2fraudes.fraude.IAG;
+import gestionnaire2fraudes.fraude.FraudeCalculatrice;
+import gestionnaire2fraudes.fraude.FraudeIAG;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestFormulaire {
+public class FormulaireTest {
     @Test
     public void constructeurFormulaireTest(){
         Formulaire form = new Formulaire();
@@ -29,8 +29,8 @@ public class TestFormulaire {
         Formulaire form = new Formulaire();
         Etudiant etudiant = new Etudiant("Mainguet", "Marius", Cursus.E3e);
         Etudiant etudiant2 = new Etudiant("Malard", "Lenny", Cursus.E3e);
-        Calculatrice fraudeCalc = new Calculatrice(LocalDateTime.now(), "Tricherie avec calculatrice", "C'est un tricheur", "Casio", "Scratch");
-        IAG fraudeIag = new IAG(LocalDateTime.now(), "Tricherie avec IAG", "C'est un tricheur", "ChatGPT");
+        FraudeCalculatrice fraudeCalc = new FraudeCalculatrice(LocalDateTime.now(), "Tricherie avec calculatrice", "C'est un tricheur", "Casio", "Scratch");
+        FraudeIAG fraudeIag = new FraudeIAG(LocalDateTime.now(), "Tricherie avec IAG", "C'est un tricheur", "ChatGPT");
         form.ajoutFraudeurs(etudiant, fraudeCalc);
         assertTrue(form.getFraudeurs().containsKey(etudiant), "L'étudiant n'a pas été ajouté");
 

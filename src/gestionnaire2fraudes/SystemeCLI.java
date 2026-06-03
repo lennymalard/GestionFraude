@@ -3,17 +3,22 @@ package gestionnaire2fraudes;
 import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Epreuve;
 import gestionnaire2fraudes.cursus.Etudiant;
+import gestionnaire2fraudes.fraude.FraudeCalculatrice;
+import gestionnaire2fraudes.fraude.FraudeIAG;
+import gestionnaire2fraudes.fraude.FraudeIAGConnectee;
+import gestionnaire2fraudes.fraude.FraudePapier;
+import gestionnaire2fraudes.utils.Tuple;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class SystemeCLI implements CLI{
-    //Intervalle de bonne valeur pour les différent menu
-    static String[] INTERVALMENUPRINCIPAL = {"1", "2", "3", "4", "5", "6"};
-    static String[] INTERVALMENURECHERCHE = {"1", "2", "3", "4", "5", "6", "7", "8"};
+    //Intervalle de bonne valeur
     static String[] INTERVALCURSUS = {"E1", "E2", "E3e", "E3a", "E4", "E5"};
+    static String[] INTERVALOUINON = {"o","n"};
     static Scanner scanner = new Scanner(System.in);
     String input;
     Systeme sys = new Systeme();
@@ -58,99 +63,56 @@ public class SystemeCLI implements CLI{
         return false;
     }
 
+    private int rightInput(String input){
+        int i = Integer.parseInt(input);
+        return i;
+    }
+
     private void afficheMenuPrincipal(){
         boolean quitter = false;
         while(!quitter){
-            display("Entrez votre choix : ");
-            input = scanner.nextLine().trim();
-            if(rightInput(input, INTERVALMENUPRINCIPAL)){
-                switch(input){
-                    case "1":
-                        ArrayList<Epreuve> epreuves = sys.getEpreuves();
-                        for(int i = 0; i < epreuves.size(); i++){
-                            StringBuilder strEpreuve = new StringBuilder(i);
-                            strEpreuve.append(" ");
-                            strEpreuve.append(epreuves.get(i).toString());
-                            display(strEpreuve.toString());
-                        }
-                        while(true){
-                            display("Entrez votre choix : ");
-                            input = scanner.nextLine().trim();
-                            String[] bonInterval = new String[epreuves.size()];
-                            for (int i = 0; i <= epreuves.size(); i++) bonInterval[i] = String.valueOf(i);
-                            if(rightInput(input, bonInterval)){
-                                Formulaire form = new Formulaire(LocalDate.now(), LocalDate.now());
-                                sys.addFormulaire(epreuves.get(Integer.parseInt(input)), form);
-                                break;
-                            }else{
-                                display("Entrée non accepté, veuillez réessayer");
-                            }
-                        }
-                        display("Vous allez renseigner une fraude");
-                        while(true){
-                            display("Quel est le nom de l'étudiant : ");
-                            input = scanner.nextLine();
-                            if(containsNumber(input)){
-                                display("Entrée non accepté, veuillez réessayer sans chiffre.");
-                            }else{
-                                String nomEtu = input;
-                                break;
-                            }
-                        }
-                        while(true){
-                            display("Quel est le prenom de l'étudiant : ");
-                            input = scanner.nextLine();
-                            if(containsNumber(input)){
-                                display("Entrée non accepté, veuillez réessayer sans chiffres");
-                            }else{
-                                String prenomEtu = input;
-                                break;
-                            }
-                        }
-                        while(true){
-                            display("Quel est le cursus de l'étudiant (E1, E2, E3e, E3a, E4, E5) : ");
-                            input = scanner.nextLine().trim();
-                            if(rightInput(input, INTERVALCURSUS)){
-                                Cursus cursusEtu = Cursus.valueOf(input);
-                                break;
-                            }else{
-                                display("Entrée non accepté, veuillez réessayer");
-                            }
-                        }
-                        Etudiant etu = sys.findEtudiant(nomEtu, prenomEtu, cursusEtu);
-                        if(etu == null){
-                            etu = new Etudiant(nomEtu, prenomEtu, cursusEtu);
-                        }
-                        //continuer avec les type de fraude à ajouté
-                        display("Formulaire créer");
-                        break;
-                    case "2":
-                        display("Vous allez modifier un formulaire");
-                        break;
-                    case "3":
-                        display("Vous allez rechercher ou analyser");
-                        afficheMenuRecherche();
-                        break;
-                    case "4":
-                        display("Vous allez supprimer un formulaire");
-                        break;
-                    case "5":
-                        display("Vous allez créer une épreuve");
-                        break;
-                    case "6":
-                        display("Vous quittez le programme");
-                        quitter = true;
-                        break;
-                    default:
-                        break;
+            int choix = 0;
+            boolean choixMenuPrincipal = false;
+
+            while(!choixMenuPrincipal){
+                display("Entrez votre choix : ");
+                input = scanner.nextLine().trim();
+                try{
+                    choix = rightInput(input);
+                    if (choix >= 1 && choix <= 6) {
+                        choixMenuPrincipal = true;
+                    } else {
+                        display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 6.");
+                    }
+
+                } catch (NumberFormatException e) {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre valide.");
                 }
-            }else{
-                StringBuilder messageTemp = new StringBuilder("Veuillez rentré une entrée valide parmis ces choix : ");
-                for (String entree: INTERVALMENUPRINCIPAL){
-                    messageTemp.append(entree);
-                    messageTemp.append(" ");
-                }
-                display(messageTemp.toString());
+            }
+            switch(choix){
+                case 1:
+                    display("Vous allez créer un formulaire");
+                    //afficherCreationFormulaire();
+                    break;
+                case 2:
+                    display("Vous allez modifier un formulaire");
+                    break;
+                case 3:
+                    display("Vous allez rechercher ou analyser");
+                    afficheMenuRecherche();
+                    break;
+                case 4:
+                    display("Vous allez supprimer un formulaire");
+                    break;
+                case 5:
+                    display("Vous allez créer une épreuve");
+                    break;
+                case 6:
+                    display("Vous quittez le programme");
+                    quitter = true;
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -167,37 +129,58 @@ public class SystemeCLI implements CLI{
             display("6 - Nombre total de fraudes enregistré dans le système");
             display("7 - Moyenne de fraude par formulaire");
             display("8 - Écart type de fraude par formulaire");
-            display("Entrez votre choix : ");
-            input = scanner.nextLine().trim();
-            if(rightInput(input, INTERVALMENURECHERCHE)){
-                switch(input){
-                    case "1":
 
-                        //sys.findFormulairesEtudiant()
-                        break;
-                    case "2":
-                        display("Vous allez modifier un formulaire");
-                        break;
-                    case "3":
-                        break;
-                    case "4":
-                        display("Vous allez supprimer un formulaire");
-                        break;
-                    case "5":
-                        display("Vous allez créer une épreuve");
-                        break;
-                    case "6":
-                        display("Vous quittez le programme");
-                        break;
-                    case "7":
-                        display("Vous allez créer une épreuve");
-                        break;
-                    case "8":
-                        display("Vous allez créer une épreuve");
-                        break;
-                    default:
-                        break;
+            int choix = 0;
+            boolean choixMenuRecherche = false;
+
+            while(!choixMenuRecherche){
+                display("Entrez votre choix : ");
+                input = scanner.nextLine().trim();
+                try{
+                    choix = rightInput(input);
+                    if (choix >= 1 && choix <= 8) {
+                        choixMenuRecherche = true;
+                    } else {
+                        display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 8.");
+                    }
+
+                } catch (NumberFormatException e) {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre valide.");
                 }
+            }
+            switch(choix){
+                case 1:
+                    //sys.findFormulairesEtudiant()
+                    quitterRecherche = true;
+                    break;
+                case 2:
+                    display("Vous allez modifier un formulaire");
+                    quitterRecherche = true;
+                    break;
+                case 3:
+                    break;
+                case 4:
+                    display("Vous allez supprimer un formulaire");
+                    quitterRecherche = true;
+                    break;
+                case 5:
+                    display("Vous allez créer une épreuve");
+                    quitterRecherche = true;
+                    break;
+                case 6:
+                    display("Vous quittez le programme");
+                    quitterRecherche = true;
+                    break;
+                case 7:
+                    display("Vous allez créer une épreuve");
+                    quitterRecherche = true;
+                    break;
+                case 8:
+                    display("Vous allez créer une épreuve");
+                    quitterRecherche = true;
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -212,5 +195,216 @@ public class SystemeCLI implements CLI{
             }
         }
         return false;
+    }
+
+    private boolean onlyNumber(String str){
+        if (str == null) return false;
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void afficherCreationFormulaire(){
+        Formulaire form = null;
+        String nomEtu = null;
+        String prenomEtu = null;
+        Cursus cursusEtu = null;
+        ArrayList<Epreuve> epreuves = sys.getEpreuves();
+        for(int i = 0; i < epreuves.size(); i++){
+            StringBuilder strEpreuve = new StringBuilder(i);
+            strEpreuve.append(" - ");
+            strEpreuve.append(epreuves.get(i).toString()); //faire la fonction toString dans Epreuve (ne pas utiliser de saut de ligne)
+            display(strEpreuve.toString());
+        }
+        boolean choixEpreuve = false;
+        while(!choixEpreuve){
+            int choix = 0;
+            display("Entrez votre choix : ");
+            input = scanner.nextLine().trim();
+            try{
+                choix = rightInput(input);
+                if (choix >= 0 && choix <= epreuves.size()) {
+                    choixEpreuve = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et " + String.valueOf(epreuves.size()) + ".");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+        form = new Formulaire(LocalDate.now(), LocalDate.now());
+        sys.addFormulaire(epreuves.get(Integer.parseInt(input)), form);
+        boolean renseignerFraudeEtu = true;
+        while(renseignerFraudeEtu){
+            display("Vous allez renseigner une fraude");
+            boolean choixNomEtu = false;
+            while(!choixNomEtu){
+                display("Quel est le nom de l'étudiant : ");
+                input = scanner.nextLine();
+                if(containsNumber(input)){
+                    display("Entrée non accepté, veuillez réessayer sans chiffre.");
+                }else{
+                    nomEtu = input;
+                    choixNomEtu = true;
+                }
+            }
+            boolean choixPrenomEtu = false;
+            while(!choixPrenomEtu){
+                display("Quel est le prenom de l'étudiant : ");
+                input = scanner.nextLine();
+                if(containsNumber(input)){
+                    display("Entrée non accepté, veuillez réessayer sans chiffres");
+                }else{
+                    prenomEtu = input;
+                    choixPrenomEtu = true;
+                }
+            }
+            boolean choixCursusEtu = false;
+            while(!choixCursusEtu){
+                display("Quel est le cursus de l'étudiant (E1, E2, E3e, E3a, E4, E5) : ");
+                input = scanner.nextLine().trim();
+                if(rightInput(input, INTERVALCURSUS)){
+                    cursusEtu = Cursus.valueOf(input);
+                    choixCursusEtu = true;
+                }else{
+                    display("Entrée non accepté, veuillez réessayer");
+                }
+            }
+            Etudiant etu = sys.findEtudiant(nomEtu, prenomEtu, cursusEtu);
+            if(etu == null){
+                etu = new Etudiant(nomEtu, prenomEtu, cursusEtu);
+            }
+            display("Quel type de fraude a-t-il commis ?");
+            display("1 - Fraude avec calculatrice.");
+            display("2 - Fraude avec IAG.");
+            display("3 - Fraude avec IAG connecté.");
+            display("4 - Fraude avec papier.");
+            boolean quitterSelFraude = false;
+            while(!quitterSelFraude){
+
+                int choix = 0;
+                boolean choixSelFraude = false;
+                while(!choixSelFraude){
+                    display("Entrez votre choix : ");
+                    input = scanner.nextLine().trim();
+                    try{
+                        choix = rightInput(input);
+                        if (choix >= 1 && choix <= 4) {
+                            choixSelFraude = true;
+                        } else {
+                            display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 4.");
+                        }
+
+                    } catch (NumberFormatException e) {
+                        display("Entrée non acceptée, veuillez réessayer avec un chiffre valide.");
+                    }
+                }
+                String contenu;
+                String description;
+                switch (input){
+                    case "1":
+                        display("Vous avez choisi fraude avec calculatrice");
+                        display("Veuillez saisir le contenu de la fraude : ");
+                        contenu = scanner.nextLine();
+                        display("Veuillez saisir la description de la fraude : ");
+                        description = scanner.nextLine();
+                        display("Veuillez saisir la marque de la calculatrice : ");
+                        String marque = scanner.nextLine();
+                        display("Veuillez saisir le programme de triche utilisé : ");
+                        String programme = scanner.nextLine();
+                        FraudeCalculatrice fraudeCalc = new FraudeCalculatrice(LocalDateTime.now(), contenu, description, marque, programme);
+                        form.ajoutFraudeurs(etu, fraudeCalc);
+                        quitterSelFraude = true;
+                        break;
+                    case "2":
+                        display("Vous avez choisi fraude avec IAG");
+                        display("Veuillez saisir le contenu de la fraude : ");
+                        contenu = scanner.nextLine();
+                        display("Veuillez saisir la description de la fraude : ");
+                        description = scanner.nextLine();
+                        display("Veuillez saisir le nom du service utilisé : ");
+                        String nomService = scanner.nextLine();
+                        FraudeIAG fraudeIag = new FraudeIAG(LocalDateTime.now(), contenu, description, nomService);
+                        form.ajoutFraudeurs(etu, fraudeIag);
+                        quitterSelFraude = true;
+                        break;
+                    case "3":
+                        display("Vous avez choisi fraude avec IAG connecté");
+                        display("Veuillez saisir le contenu de la fraude : ");
+                        contenu = scanner.nextLine();
+                        display("Veuillez saisir la description de la fraude : ");
+                        description = scanner.nextLine();
+                        display("Veuillez saisir le nom du service utilisé : ");
+                        String nomServiceConnecte = scanner.nextLine();
+                        display("Veuillez saisir l'ip utilisé : ");
+                        String ip = scanner.nextLine();
+                        FraudeIAGConnectee fraudeIagConn = new FraudeIAGConnectee(LocalDateTime.now(), contenu, description, nomServiceConnecte, ip);
+                        form.ajoutFraudeurs(etu, fraudeIagConn);
+                        quitterSelFraude = true;
+                        break;
+                    case "4":
+                        display("Vous avez choisi fraude avec papier");
+                        display("Veuillez saisir le contenu de la fraude : ");
+                        contenu = scanner.nextLine();
+                        display("Veuillez saisir la description de la fraude : ");
+                        description = scanner.nextLine();
+                        display("Veuillez saisir la longueur du papier : ");
+                        String longueur = null;
+                        boolean choixLongueurPapier = false;
+                        while(!choixLongueurPapier){
+                            longueur = scanner.nextLine().trim();
+                            if(!onlyNumber(longueur)){
+                                display("Entrée non accepté, veuillez réessayer");
+                            }else{
+                                choixLongueurPapier = true;
+                            }
+                        }
+                        display("Veuillez saisir la largeur du papier : ");
+                        String largeur = null;
+                        boolean choixLargeurPapier = false;
+                        while(!choixLargeurPapier){
+                            largeur = scanner.nextLine().trim();
+                            if(!onlyNumber(largeur)){
+                                display("Entrée non accepté, veuillez réessayer");
+                            }else{
+                                choixLargeurPapier = true;
+                            }
+                        }
+                        display("Est ce que le papier est plié ? (o,n) : ");
+                        boolean papierPlie = false;
+                        while(!papierPlie){
+                            String plie = scanner.nextLine().trim();
+                            if(rightInput(plie, INTERVALOUINON)){
+                                papierPlie = plie.equals("o");
+                            }else{
+                                display("Entrée non accepté, veuillez réessayer");
+                            }
+                        }
+                        FraudePapier fraudePapier = new FraudePapier(LocalDateTime.now(), contenu, description, new Tuple(longueur, largeur), papierPlie);
+                        form.ajoutFraudeurs(etu, fraudePapier);
+                        quitterSelFraude = true;
+                        break;
+                    default:
+                        break;
+                }
+                display("Avez vous une autre fraude à renseigner ? (o,n)");
+                boolean choixAutreFraude = false;
+                while (!choixAutreFraude){
+                    String nouvelleFraude = scanner.nextLine().trim();
+                    if(rightInput(nouvelleFraude, INTERVALOUINON)){
+                        if(!nouvelleFraude.equals("o")){
+                            renseignerFraudeEtu = false;
+                            choixAutreFraude = true;
+                        }else{
+                            display("Entrée non accepté, veuillez réessayer");
+                        }
+                    }
+                }
+            }
+            display("Formulaire créer");
+        }
     }
 }
