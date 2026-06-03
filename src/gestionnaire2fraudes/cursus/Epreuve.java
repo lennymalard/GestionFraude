@@ -63,4 +63,34 @@ public class Epreuve {
     public void setModalite(Modalite modalite) {
         this.modalite = modalite;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("Epreuve - ");
+
+        str.append("Code UCUE : ");
+        str.append(this.getCodeUcue());
+
+        str.append(" Date passage : ");
+        str.append(this.getDatePassage().getDayOfMonth());
+        str.append("/");
+        str.append(this.getDatePassage().getMonthValue());
+        str.append("/");
+        str.append(this.getDatePassage().getYear());
+
+        str.append(" Heure passage : ");
+        str.append(this.getHeurePassage().getHour());
+        str.append(":");
+        str.append(this.getHeurePassage().getMinute());
+
+        str.append(" Durée épreuve : ");
+        str.append(this.getDuree().toMinutes());
+        str.append("min");
+
+        str.append(" Modalité : ");
+        str.append(this.getModalite().toString());
+
+        return str.toString();
+    }
 }

@@ -3,6 +3,7 @@ package gestionnaire2fraudes;
 import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Epreuve;
 import gestionnaire2fraudes.cursus.Etudiant;
+import gestionnaire2fraudes.cursus.Modalite;
 import gestionnaire2fraudes.fraude.FraudeCalculatrice;
 import gestionnaire2fraudes.fraude.FraudeIAG;
 import gestionnaire2fraudes.fraude.FraudeIAGConnectee;
@@ -12,6 +13,7 @@ import gestionnaire2fraudes.utils.Tuple;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -22,12 +24,12 @@ public class SystemeCLI implements CLI{
     static Scanner scanner = new Scanner(System.in);
     String input;
     Systeme sys = new Systeme();
+    HashMap<Epreuve, Formulaire> epreuveForm = sys.getFormulaires();
 
 
     @Override
     public void start(){
         display("Démarrage du système. Veuillez patienter.");
-
         isRunning();
     }
 
@@ -92,10 +94,11 @@ public class SystemeCLI implements CLI{
             switch(choix){
                 case 1:
                     display("Vous allez créer un formulaire");
-                    //afficherCreationFormulaire();
+                    afficherCreationFormulaire();
                     break;
                 case 2:
                     display("Vous allez modifier un formulaire");
+                    afficherModifierFormulaire();
                     break;
                 case 3:
                     display("Vous allez rechercher ou analyser");
@@ -103,9 +106,11 @@ public class SystemeCLI implements CLI{
                     break;
                 case 4:
                     display("Vous allez supprimer un formulaire");
+                    afficherSupprimerFormulaire();
                     break;
                 case 5:
                     display("Vous allez créer une épreuve");
+                    afficherCreationEpreuve();
                     break;
                 case 6:
                     display("Vous quittez le programme");
@@ -209,9 +214,6 @@ public class SystemeCLI implements CLI{
 
     private void afficherCreationFormulaire(){
         Formulaire form = null;
-        String nomEtu = null;
-        String prenomEtu = null;
-        Cursus cursusEtu = null;
         ArrayList<Epreuve> epreuves = sys.getEpreuves();
         for(int i = 0; i < epreuves.size(); i++){
             StringBuilder strEpreuve = new StringBuilder(i);
@@ -234,9 +236,98 @@ public class SystemeCLI implements CLI{
             }catch(NumberFormatException e){
                 display("Entrée non acceptée, veuillez réessayer avec un chiffre");
             }
+            if(epreuveForm.containsKey(epreuves.get(choix))){
+                display("Cette épreuve à déjà un formulaire, veuillez réessayer.");
+                choixEpreuve = false;
+            }
         }
         form = new Formulaire(LocalDate.now(), LocalDate.now());
         sys.addFormulaire(epreuves.get(Integer.parseInt(input)), form);
+        afficherAjouterFraudeur(form);
+        display("Formulaire créer");
+    }
+
+    private void afficherModifierFormulaire(){
+
+        Formulaire formAModif = null;
+
+        display("Voici la liste des formulaires que vous pouvez modifier.");
+        int count = 0;
+        for(Epreuve epreuve : epreuveForm.keySet()){
+            display(String.valueOf(count) + " : ");
+            display(epreuve.toString());
+            display(epreuveForm.get(epreuve).toString());
+            count++;
+        }
+        boolean choixFormulaire = false;
+        while(!choixFormulaire){
+            int choix = 0;
+            display("Entrez votre choix : ");
+            input = scanner.nextLine().trim();
+            try{
+                choix = rightInput(input);
+                if (choix >= 0 && choix < count) {
+                    choixFormulaire = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et " + String.valueOf(count-1) + ".");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+        int index = 0;
+        for (Epreuve epreuve : epreuveForm.keySet()) {
+            if (index == count-1) {
+                formAModif = epreuveForm.get(epreuve);
+                break;
+            }
+            index++;
+        }
+        afficherAjouterFraudeur(formAModif);
+        formAModif.setDateModif(LocalDate.now());
+        display("Formulaire modifier");
+    }
+
+    private void afficherSupprimerFormulaire(){
+        display("Voici la liste des formulaires que vous pouvez supprimer.");
+        int count = 0;
+        for(Epreuve epreuve : epreuveForm.keySet()){
+            display(String.valueOf(count) + " : ");
+            display(epreuve.toString());
+            display(epreuveForm.get(epreuve).toString());
+            count++;
+        }
+        boolean choixFormulaireSupp = false;
+        while(!choixFormulaireSupp){
+            int choix = 0;
+            display("Entrez votre choix : ");
+            input = scanner.nextLine().trim();
+            try{
+                choix = rightInput(input);
+                if (choix >= 0 && choix < count) {
+                    choixFormulaireSupp = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et " + String.valueOf(count-1) + ".");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+        int index = 0;
+        for (Epreuve epreuve : epreuveForm.keySet()) {
+            if (index == count-1) {
+                sys.removeFormulaire(epreuve);
+                break;
+            }
+            index++;
+        }
+        display("Formulaire supprimer");
+    }
+
+    public void afficherAjouterFraudeur(Formulaire form){
+        String nomEtu = null;
+        String prenomEtu = null;
+        Cursus cursusEtu = null;
         boolean renseignerFraudeEtu = true;
         while(renseignerFraudeEtu){
             display("Vous allez renseigner une fraude");
@@ -404,7 +495,139 @@ public class SystemeCLI implements CLI{
                     }
                 }
             }
-            display("Formulaire créer");
         }
+    }
+
+    public void afficherCreationEpreuve(){
+        display("Entrez un code UCUE : ");
+        String codeUcue = scanner.nextLine().trim();
+
+        display("Vous allez renseigner la date de passage");
+        display("Veuillez renseigner le jour de passage : ");
+        int jourPassage = 0;
+        boolean choixJour = false;
+        while(!choixJour){
+            input = scanner.nextLine().trim();
+            try{
+                jourPassage = rightInput(input);
+                if (jourPassage >= 1 && jourPassage <= 31) {
+                    choixJour = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 31");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez renseigner le mois de passage : ");
+        int moisPassage = 0;
+        boolean choixMois = false;
+        while(!choixMois){
+            input = scanner.nextLine().trim();
+            try{
+                moisPassage = rightInput(input);
+                if (moisPassage >= 1 && moisPassage <= 12) {
+                    choixMois = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 12");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez renseigner l'année de passage : ");
+        int anneePassage = 0;
+        boolean choixAnnee = false;
+        while(!choixAnnee){
+            input = scanner.nextLine().trim();
+            try{
+                anneePassage = rightInput(input);
+                if (anneePassage >= 1900 && anneePassage <= LocalDate.now().getYear()) {
+                    choixAnnee = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1900 et " + String.valueOf(LocalDate.now().getYear()));
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez renseigner l'heure de passage (en h) : ");
+        int heurePassage = 0;
+        boolean choixHeure = false;
+        while(!choixHeure){
+            input = scanner.nextLine().trim();
+            try{
+                heurePassage = rightInput(input);
+                if (heurePassage >= 0 && heurePassage <= 23) {
+                    choixHeure = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 0 et 23");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez renseigner les minutes de passage : ");
+        int minPassage = 0;
+        boolean choixMin = false;
+        while(!choixMin){
+            input = scanner.nextLine().trim();
+            try{
+                minPassage = rightInput(input);
+                if (minPassage >= 0 && minPassage <= 59) {
+                    choixMin = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 0 et 59");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez renseigner la durée de l'épreuve (en min) : ");
+        int duree = 0;
+        boolean choixDuree = false;
+        while(!choixDuree){
+            input = scanner.nextLine().trim();
+            try{
+                duree = rightInput(input);
+                if (duree >= 0) {
+                    choixDuree = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre supérieur à 0.");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+
+        display("Veuillez choisir la modalité de l'épreuve parmi les choix proposé : ");
+        Modalite[] lesModalites = Modalite.values();
+        for(int i = 0; i < lesModalites.length; i++){
+            display(String.valueOf(i) + " - " + String.valueOf(lesModalites[i]));
+        }
+        int modaliteInt = 0;
+        boolean choixModalite = false;
+        while(!choixModalite){
+            input = scanner.nextLine().trim();
+            try{
+                modaliteInt = rightInput(input);
+                if (modaliteInt >= 0 && modaliteInt < lesModalites.length) {
+                    choixModalite = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre supérieur à 0.");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+        }
+        Modalite modalite = lesModalites[modaliteInt];
+        Epreuve e = new Epreuve(codeUcue, jourPassage, moisPassage, anneePassage, heurePassage, minPassage, duree, modalite);
+        sys.addEpreuve(e);
+        display("L'épreuve a bien été créé");
     }
 }

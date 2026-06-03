@@ -78,4 +78,29 @@ public class Formulaire {
             fraudeurs.put(etudiant, listeFraudes);
         }
     }
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("Formulaire - ");
+
+        str.append("Id : ");
+        str.append(this.getId());
+
+        str.append(" Date création : ");
+        str.append(this.getDateCreation().getDayOfMonth());
+        str.append("/");
+        str.append(this.getDateCreation().getMonthValue());
+        str.append("/");
+        str.append(this.getDateCreation().getYear());
+
+        str.append(" Date modification : ");
+        str.append(this.getDateModif().getDayOfMonth());
+        str.append("/");
+        str.append(this.getDateModif().getMonthValue());
+        str.append("/");
+        str.append(this.getDateModif().getYear());
+
+        return str.toString();
+    }
 }
