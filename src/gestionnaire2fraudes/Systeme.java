@@ -15,6 +15,23 @@ public class Systeme {
 
     public Systeme(){
         this.formulaires = new HashMap<>();
+        this.epreuves = new ArrayList<>();
+    }
+
+    public HashMap<Epreuve, Formulaire> getFormulaires() {
+        return formulaires;
+    }
+
+    public void setFormulaires(HashMap<Epreuve, Formulaire> formulaires) {
+        this.formulaires = formulaires;
+    }
+
+    public ArrayList<Epreuve> getEpreuves() {
+        return epreuves;
+    }
+
+    public void setEpreuves(ArrayList<Epreuve> epreuves) {
+        this.epreuves = epreuves;
     }
 
     public void addFormulaire(Epreuve epreuve, Formulaire formulaire){
@@ -23,6 +40,14 @@ public class Systeme {
 
     public void removeFormulaire(Epreuve epreuve){
         formulaires.remove(epreuve);
+    }
+
+    public void addEpreuve(Epreuve epreuve){
+        epreuves.add(epreuve);
+    }
+
+    public void removeEpreuve(Epreuve epreuve){
+        epreuves.remove(epreuve);
     }
 
     public ArrayList<Formulaire> findFormulairesEtudiant(Etudiant etudiant) {
@@ -45,7 +70,6 @@ public class Systeme {
         }
         return formulairesConcernes;
     }
-
 
     public ArrayList<Etudiant> findEtudiant(String key, String value) {
         ArrayList<Etudiant> etudiants = new ArrayList<>();
@@ -75,12 +99,10 @@ public class Systeme {
     public Etudiant findEtudiant(int id){
         for (Map.Entry<Epreuve, Formulaire> formulairesEntry : this.formulaires.entrySet()) {
             Formulaire formulaire = formulairesEntry.getValue();
-            if (formulaire.getFraudeurs() != null) {
-                for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
-                    Etudiant etudiant = fraudeursEntry.getKey();
-                    if (etudiant.getId() == id) {
-                        return etudiant;
-                    }
+            for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
+                Etudiant etudiant = fraudeursEntry.getKey();
+                if (etudiant.getId() == id) {
+                    return etudiant;
                 }
             }
         }
@@ -90,20 +112,18 @@ public class Systeme {
     public Etudiant findEtudiant(String nom, String prenom, Cursus cursus){
         for (Map.Entry<Epreuve, Formulaire> formulairesEntry : this.formulaires.entrySet()) {
             Formulaire formulaire = formulairesEntry.getValue();
-            if (formulaire.getFraudeurs() != null) {
-                for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
-                    Etudiant etudiant = fraudeursEntry.getKey();
-                    if (etudiant.getNom().equalsIgnoreCase(nom) &&
-                            etudiant.getPrenom().equalsIgnoreCase(prenom) &&
-                            etudiant.getCursus() == cursus) {
-                        return etudiant;
-                    }
+            for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
+                Etudiant etudiant = fraudeursEntry.getKey();
+                if (etudiant.getNom().equalsIgnoreCase(nom) &&
+                        etudiant.getPrenom().equalsIgnoreCase(prenom) &&
+                        etudiant.getCursus() == cursus) {
+                    return etudiant;
                 }
             }
+
         }
         return null;
     }
-
 
     public int calcNombreFormulaires(){
         return formulaires.size();
@@ -123,48 +143,47 @@ public class Systeme {
         return  etudiants.size();
     }
 
-
     public int calcNombreFraudes(){
         ArrayList<Fraude> fraudes = new ArrayList<>();
         for (Map.Entry<Epreuve, Formulaire> formulairesEntry : this.formulaires.entrySet()) {
             Formulaire formulaire = formulairesEntry.getValue();
             for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
                 ArrayList<Fraude> fraudesEtudiant = fraudeursEntry.getValue();
-                for (Fraude fraude : fraudesEtudiant){
-                    if  (!fraudes.contains(fraude)){
-                        fraudes.add(fraude);
-                    }
-                }
+               fraudes.addAll(fraudesEtudiant);
             }
         }
         return  fraudes.size();
     }
 
-
-    public float calcMoyenneFraudesFormulaire() {
+    public double calcMoyenneFraudesFormulaire() {
         int numFraudes = 0;
         for (Map.Entry<Epreuve, Formulaire> formulairesEntry : this.formulaires.entrySet()) {
             Formulaire formulaire = formulairesEntry.getValue();
             ArrayList<Fraude> fraudesFormulaire = new ArrayList<>();
             for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
                 ArrayList<Fraude> fraudesEtudiant = fraudeursEntry.getValue();
-                for (Fraude fraude : fraudesEtudiant){
-                    if  (!fraudesFormulaire.contains(fraude)){
-                        fraudesFormulaire.add(fraude);
-                    }
-                }
-                numFraudes += fraudesFormulaire.size();
+                fraudesFormulaire.addAll(fraudesEtudiant);
             }
+            numFraudes += fraudesFormulaire.size();
         }
-        return (float) numFraudes / formulaires.size();
-
-    }
-
-    public float calcStdFraudesFormulaire(){
-        // TODO calcStdFraudesFormulaire
-
+        return (double) numFraudes / formulaires.size();
     }
 
 
+    public double calcStdFraudesFormulaire(){
+        double moyenne = this.calcMoyenneFraudesFormulaire();
+        double sommeEcarts = 0;
+        for (Map.Entry<Epreuve, Formulaire> formulairesEntry : this.formulaires.entrySet()) {
+            Formulaire formulaire = formulairesEntry.getValue();
+            ArrayList<Fraude> fraudesFormulaire = new ArrayList<>();
+            for (Map.Entry<Etudiant, ArrayList<Fraude>> fraudeursEntry : formulaire.getFraudeurs().entrySet()) {
+                ArrayList<Fraude> fraudesEtudiant = fraudeursEntry.getValue();
+                fraudesFormulaire.addAll(fraudesEtudiant);
+            }
+            sommeEcarts += Math.pow(fraudesFormulaire.size() - moyenne, 2);
+        }
+        return Math.sqrt( sommeEcarts / formulaires.size());
+
+    }
 
 }
