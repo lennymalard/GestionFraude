@@ -8,14 +8,18 @@ import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Epreuve;
 import gestionnaire2fraudes.cursus.Etudiant;
 import gestionnaire2fraudes.fraude.Fraude;
+import gestionnaire2fraudes.utils.Graphe;
 
 public class Systeme {
     private HashMap<Epreuve, Formulaire> formulaires;
     private ArrayList<Epreuve> epreuves;
+    private Graphe graphe;
+    private HashMap<Etudiant, Integer> etudiantIndiceMap;
 
     public Systeme(){
         this.formulaires = new HashMap<>();
         this.epreuves = new ArrayList<>();
+        this.graphe = new Graphe(0, false, new int[][]{});
     }
 
     public HashMap<Epreuve, Formulaire> getFormulaires() {
@@ -184,6 +188,34 @@ public class Systeme {
         }
         return Math.sqrt( sommeEcarts / formulaires.size());
 
+    }
+
+    public void addFraudeurGraphe(Etudiant etudiant){
+        if (!etudiantIndiceMap.containsKey(etudiant)){
+            this.graphe.ajouterSommet();
+            etudiantIndiceMap.put(etudiant, this.graphe.getNombreSommets()-1);
+        }
+    }
+
+    public void creerLienFraudeurs(Etudiant etudiant1, Etudiant etudiant2){
+        if (!etudiantIndiceMap.containsKey(etudiant1) || !etudiantIndiceMap.containsKey(etudiant2)){
+            return;
+        }
+        int indice1 = etudiantIndiceMap.get(etudiant1);
+        int indice2 = etudiantIndiceMap.get(etudiant2);
+        this.graphe.ajouterArc(indice1, indice2);
+    }
+
+    public void lierFraudeursEpreuve(){
+        for (Formulaire formulaire : this.formulaires.values()){
+            for (Etudiant etudiant1 : formulaire.getFraudeurs().keySet()){
+                for (Etudiant etudiant2 : formulaire.getFraudeurs().keySet()) {
+                    if (etudiant1.getId() < etudiant2.getId()) {
+                        this.creerLienFraudeurs(etudiant1, etudiant2);
+                    }
+                }
+            }
+        }
     }
 
 }
