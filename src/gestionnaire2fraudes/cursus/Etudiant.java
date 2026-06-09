@@ -55,4 +55,21 @@ public class Etudiant {
     public void setCursus(Cursus cursus) {
         this.cursus = cursus;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder str = new StringBuilder();
+        str.append("Nom : ");
+        str.append(this.getNom());
+
+        str.append(" Prenom : ");
+        str.append(this.getPrenom());
+
+        str.append(" Cursus : ");
+        str.append(this.getCursus());
+
+        str.append(" Id : ");
+        str.append(this.getId());
+        return str.toString();
+    }
 }

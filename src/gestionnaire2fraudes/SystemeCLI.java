@@ -17,14 +17,13 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class SystemeCLI implements CLI{
+public class SystemeCLI extends Systeme implements CLI{
     //Intervalle de bonne valeur
     static String[] INTERVALCURSUS = {"E1", "E2", "E3e", "E3a", "E4", "E5"};
     static String[] INTERVALOUINON = {"o","n"};
     static Scanner scanner = new Scanner(System.in);
     String input;
-    Systeme sys = new Systeme();
-    HashMap<Epreuve, Formulaire> epreuveForm = sys.getFormulaires();
+    HashMap<Epreuve, Formulaire> epreuveForm = this.getFormulaires();
 
 
     @Override
@@ -66,8 +65,7 @@ public class SystemeCLI implements CLI{
     }
 
     private int rightInput(String input){
-        int i = Integer.parseInt(input);
-        return i;
+        return Integer.parseInt(input);
     }
 
     private void afficheMenuPrincipal(){
@@ -95,22 +93,27 @@ public class SystemeCLI implements CLI{
                 case 1:
                     display("Vous allez créer un formulaire");
                     afficherCreationFormulaire();
+                    isRunning();
                     break;
                 case 2:
                     display("Vous allez modifier un formulaire");
                     afficherModifierFormulaire();
+                    isRunning();
                     break;
                 case 3:
                     display("Vous allez rechercher ou analyser");
                     afficheMenuRecherche();
+                    isRunning();
                     break;
                 case 4:
                     display("Vous allez supprimer un formulaire");
                     afficherSupprimerFormulaire();
+                    isRunning();
                     break;
                 case 5:
                     display("Vous allez créer une épreuve");
                     afficherCreationEpreuve();
+                    isRunning();
                     break;
                 case 6:
                     display("Vous quittez le programme");
@@ -153,35 +156,70 @@ public class SystemeCLI implements CLI{
                     display("Entrée non acceptée, veuillez réessayer avec un chiffre valide.");
                 }
             }
+            ArrayList<Formulaire> forms;
+            Etudiant etu;
+            StringBuilder str;
             switch(choix){
                 case 1:
-                    //sys.findFormulairesEtudiant()
+                    display("Vous aller renseigner un étudiant");
+                    etu = afficherTrouverEtudiant();
+                    display(etu.toString());
+                    display("Voici les formulaires associé à l'étudiant renseigné.");
+                    forms = this.findFormulairesEtudiant(etu);
+                    for(Formulaire form : forms){
+                        display(form.toString());
+                    }
                     quitterRecherche = true;
                     break;
                 case 2:
-                    display("Vous allez modifier un formulaire");
+                    display("Vous allez renseigner une épreuve");
+                    Epreuve epreuve = afficherTrouverEpreuve();
+                    display(epreuve.toString());
+                    display("Voici les formulaires associé à l'épreuve renseigné.");
+                    forms = this.findFormulairesEpreuve(epreuve);
+                    for(Formulaire form : forms){
+                        display(form.toString());
+                    }
                     quitterRecherche = true;
                     break;
                 case 3:
+                    display("Vous aller renseigner un étudiant");
+                    etu = afficherTrouverEtudiant();
+                    quitterRecherche = true;
                     break;
                 case 4:
-                    display("Vous allez supprimer un formulaire");
+                    int nbrTotalForms = this.calcNombreFormulaires();
+                    str = new StringBuilder("Le nombre total de formulaire enregistré dans le système est de ");
+                    str.append(nbrTotalForms);
+                    display(str.toString());
                     quitterRecherche = true;
                     break;
                 case 5:
-                    display("Vous allez créer une épreuve");
+                    int nbrTotalEtu = this.calcNombreEtudiants();
+                    str = new StringBuilder("Le nombre total d'étudiant enregistré dans le système est de ");
+                    str.append(nbrTotalEtu);
+                    display(str.toString());
                     quitterRecherche = true;
                     break;
                 case 6:
-                    display("Vous quittez le programme");
+                    int nbrTotalFraude = this.calcNombreFraudes();
+                    str = new StringBuilder("Le nombre total de fraudes enregistré dans le système est de ");
+                    str.append(nbrTotalFraude);
+                    display(str.toString());
                     quitterRecherche = true;
                     break;
                 case 7:
-                    display("Vous allez créer une épreuve");
+                    double moyFraudeForm = this.calcMoyenneFraudesFormulaire();
+                    str = new StringBuilder("La moyenne de fraude par formulaire est de ");
+                    str.append(moyFraudeForm);
+                    display(str.toString());
                     quitterRecherche = true;
                     break;
                 case 8:
-                    display("Vous allez créer une épreuve");
+                    double ecartTypeFraudeForm = this.calcStdFraudesFormulaire();
+                    str = new StringBuilder("Le nombre total d'étudiant enregistré dans le système est de ");
+                    str.append(ecartTypeFraudeForm);
+                    display(str.toString());
                     quitterRecherche = true;
                     break;
                 default:
@@ -214,11 +252,12 @@ public class SystemeCLI implements CLI{
 
     private void afficherCreationFormulaire(){
         Formulaire form = null;
-        ArrayList<Epreuve> epreuves = sys.getEpreuves();
+        ArrayList<Epreuve> epreuves = this.getEpreuves();
         for(int i = 0; i < epreuves.size(); i++){
-            StringBuilder strEpreuve = new StringBuilder(i);
+            StringBuilder strEpreuve = new StringBuilder();
+            strEpreuve.append(i);
             strEpreuve.append(" - ");
-            strEpreuve.append(epreuves.get(i).toString()); //faire la fonction toString dans Epreuve (ne pas utiliser de saut de ligne)
+            strEpreuve.append(epreuves.get(i).toString());
             display(strEpreuve.toString());
         }
         boolean choixEpreuve = false;
@@ -228,21 +267,21 @@ public class SystemeCLI implements CLI{
             input = scanner.nextLine().trim();
             try{
                 choix = rightInput(input);
-                if (choix >= 0 && choix <= epreuves.size()) {
+                if (choix >= 0 && choix < epreuves.size()) {
                     choixEpreuve = true;
+                    if(epreuveForm.containsKey(epreuves.get(choix))){
+                        display("Cette épreuve à déjà un formulaire, veuillez réessayer.");
+                        choixEpreuve = false;
+                    }
                 } else {
                     display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et " + String.valueOf(epreuves.size()) + ".");
                 }
             }catch(NumberFormatException e){
                 display("Entrée non acceptée, veuillez réessayer avec un chiffre");
             }
-            if(epreuveForm.containsKey(epreuves.get(choix))){
-                display("Cette épreuve à déjà un formulaire, veuillez réessayer.");
-                choixEpreuve = false;
-            }
         }
         form = new Formulaire(LocalDate.now(), LocalDate.now());
-        sys.addFormulaire(epreuves.get(Integer.parseInt(input)), form);
+        this.addFormulaire(epreuves.get(Integer.parseInt(input)), form);
         afficherAjouterFraudeur(form);
         display("Formulaire créer");
     }
@@ -316,7 +355,7 @@ public class SystemeCLI implements CLI{
         int index = 0;
         for (Epreuve epreuve : epreuveForm.keySet()) {
             if (index == count-1) {
-                sys.removeFormulaire(epreuve);
+                this.removeFormulaire(epreuve);
                 break;
             }
             index++;
@@ -364,7 +403,7 @@ public class SystemeCLI implements CLI{
                     display("Entrée non accepté, veuillez réessayer");
                 }
             }
-            Etudiant etu = sys.findEtudiant(nomEtu, prenomEtu, cursusEtu);
+            Etudiant etu = this.findEtudiant(nomEtu, prenomEtu, cursusEtu);
             if(etu == null){
                 etu = new Etudiant(nomEtu, prenomEtu, cursusEtu);
             }
@@ -627,7 +666,90 @@ public class SystemeCLI implements CLI{
         }
         Modalite modalite = lesModalites[modaliteInt];
         Epreuve e = new Epreuve(codeUcue, jourPassage, moisPassage, anneePassage, heurePassage, minPassage, duree, modalite);
-        sys.addEpreuve(e);
+        this.addEpreuve(e);
         display("L'épreuve a bien été créé");
     }
+
+    public Etudiant afficherTrouverEtudiant(){
+        Etudiant etu = null;
+        String nomEtu = null;
+        String prenomEtu = null;
+        Cursus cursusEtu = null;
+        boolean renseignerEtu = false;
+        while(renseignerEtu){
+            boolean choixNomEtu = false;
+            while(!choixNomEtu){
+                display("Quel est le nom de l'étudiant : ");
+                input = scanner.nextLine();
+                if(containsNumber(input)){
+                    display("Entrée non accepté, veuillez réessayer sans chiffre.");
+                }else{
+                    nomEtu = input;
+                    choixNomEtu = true;
+                }
+            }
+            boolean choixPrenomEtu = false;
+            while(!choixPrenomEtu){
+                display("Quel est le prenom de l'étudiant : ");
+                input = scanner.nextLine();
+                if(containsNumber(input)){
+                    display("Entrée non accepté, veuillez réessayer sans chiffres");
+                }else{
+                    prenomEtu = input;
+                    choixPrenomEtu = true;
+                }
+            }
+            boolean choixCursusEtu = false;
+            while(!choixCursusEtu){
+                display("Quel est le cursus de l'étudiant (E1, E2, E3e, E3a, E4, E5) : ");
+                input = scanner.nextLine().trim();
+                if(rightInput(input, INTERVALCURSUS)){
+                    cursusEtu = Cursus.valueOf(input);
+                    choixCursusEtu = true;
+                }else{
+                    display("Entrée non accepté, veuillez réessayer");
+                }
+            }
+            etu = this.findEtudiant(nomEtu, prenomEtu, cursusEtu);
+            if(etu != null){
+                renseignerEtu = true;
+            }else{
+                display("Cette étudiant n'existe pas veuillez réessayer");
+            }
+        }
+        return etu;
+    }
+
+    public Epreuve afficherTrouverEpreuve(){
+        ArrayList<Epreuve> epreuves = this.getEpreuves();
+        for(int i = 0; i < epreuves.size(); i++){
+            StringBuilder strEpreuve = new StringBuilder(i);
+            strEpreuve.append(" - ");
+            strEpreuve.append(epreuves.get(i).toString());
+            display(strEpreuve.toString());
+        }
+        boolean choixEpreuve = false;
+        while(!choixEpreuve){
+            int choix = 0;
+            display("Entrez votre choix : ");
+            input = scanner.nextLine().trim();
+            try{
+                choix = rightInput(input);
+                if (choix >= 0 && choix <= epreuves.size()) {
+                    choixEpreuve = true;
+                } else {
+                    display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et " + String.valueOf(epreuves.size()) + ".");
+                }
+            }catch(NumberFormatException e){
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre");
+            }
+            if(!epreuveForm.containsKey(epreuves.get(choix))){
+                display("Cette épreuve n'a pas de formulaire associé, veuillez réessayer.");
+                choixEpreuve = false;
+            }
+        }
+        return epreuves.get(Integer.parseInt(input));
+    }
 }
+
+
