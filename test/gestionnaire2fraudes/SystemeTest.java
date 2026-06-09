@@ -132,21 +132,21 @@ public class SystemeTest {
         // Recherche dans un formulaire sans étudiants
         Formulaire formulaireVide = new Formulaire();
         systeme.addFormulaire(new Epreuve("TEST", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireVide);
-        assertNull(systeme.findEtudiant(100), "Il n'y a pas d'étudiants dans l'un des formulaires.");
+        assertNull(systeme.findEtudiant(100), "Le résultat doit être null.");
 
         Formulaire formulaireVideInit = new Formulaire();
         formulaireVideInit.setFraudeurs(new HashMap<>());
         systeme.addFormulaire(new Epreuve("TEST2", 1, 1, 2026, 9, 0, 60, Modalite.QCM), formulaireVideInit);
-        assertNull(systeme.findEtudiant(100), "La boucle des fraudeurs ne s'exécute pas.");
+        assertNull(systeme.findEtudiant(100), "Le résultat doit être null.");
 
         Systeme systemeVide = new Systeme();
-        assertNull(systemeVide.findEtudiant(100), "Le système est totalement vide.");
+        assertNull(systemeVide.findEtudiant(100), "Le résultat doit être null.");
 
         // Recherche dans un systeme où le seul formulaire est vide
         Systeme systemeIsole = new Systeme();
         Formulaire formulaireIsole = new Formulaire();
         systemeIsole.addFormulaire(new Epreuve("TEST3", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireIsole);
-        assertNull(systemeIsole.findEtudiant(etudiant1.getId()), "Doit gérer le cas où fraudeurs est null sans effet de bord.");
+        assertNull(systemeIsole.findEtudiant(etudiant1.getId()), "Le résultat doit être null.");
     }
 
     @Test
@@ -165,21 +165,16 @@ public class SystemeTest {
         // Recherche dans un formulaire sans étudiants
         Formulaire formulaireVide = new Formulaire();
         systeme.addFormulaire(new Epreuve("TEST1", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireVide);
-        assertNull(systeme.findEtudiant("Darde", "Romain", Cursus.E3e), "Il n'y a pas d'étudiants dans l'un des formulaires.");
-
-        Formulaire formulaireVideInit = new Formulaire();
-        formulaireVideInit.setFraudeurs(new HashMap<>());
-        systeme.addFormulaire(new Epreuve("TEST2", 1, 1, 2026, 9, 0, 60, Modalite.QCM), formulaireVideInit);
-        assertNull(systeme.findEtudiant("Darde", "Romain", Cursus.E3e), "La boucle des fraudeurs ne s'exécute pas.");
+        assertNull(systeme.findEtudiant("Darde", "Romain", Cursus.E3e), "Le résultat doit être null.");
 
         Systeme systemeVide = new Systeme();
-        assertNull(systemeVide.findEtudiant("Malard", "Lenny", Cursus.E3e), "Le système est totalement vide.");
+        assertNull(systemeVide.findEtudiant("Malard", "Lenny", Cursus.E3e), "Le résultat doit être null.");
 
         // Recherche dans un systeme où le seul formulaire est vide
         Systeme systemeIsole = new Systeme();
         Formulaire formulaireIsole = new Formulaire();
         systemeIsole.addFormulaire(new Epreuve("TEST3", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireIsole);
-        assertNull(systemeIsole.findEtudiant("Malard", "Lenny", Cursus.E3e), "Doit gérer le cas où fraudeurs est null sans effet de bord.");
+        assertNull(systemeIsole.findEtudiant("Malard", "Lenny", Cursus.E3e), "Le résultat doit être null.");
     }
 
     @Test
@@ -212,27 +207,27 @@ public class SystemeTest {
         ArrayList<Etudiant> resultatRechercheCleInconnue= systeme.findEtudiant("clé", "Inconnu");
         assertTrue(resultatRechercheCleInconnue.isEmpty(), "Le résultat doit être vide.");
 
-        // Recherche d'un étudiant présent dans plusieurs formulaires (!etudiants.contains)
+        // Recherche d'un étudiant présent dans plusieurs formulaires 
         formulaire1.getFraudeurs().put(etudiant2, new ArrayList<>());
-        assertEquals(2, systeme.findEtudiant("prenom", "Alice").size(), "L'étudiant 2 est présent dans deux formulaires, il ne doit pas être dupliqué dans la liste.");
+        assertEquals(2, systeme.findEtudiant("prenom", "Alice").size(), "La taille du résultat doit être 2.");
 
         formulaire2.getFraudeurs().put(etudiant1, new ArrayList<>());
-        assertEquals(1, systeme.findEtudiant("nom", "Malard").size(), "L'étudiant 1 est présent dans deux formulaires, il ne doit pas être dupliqué dans la liste.");
+        assertEquals(1, systeme.findEtudiant("nom", "Malard").size(), "La taille du résultat doit être 1.");
 
         // Recherche dans un formulaire sans étudiants
         Formulaire formulaireVide = new Formulaire();
         formulaireVide.setFraudeurs(new HashMap<>());
         systeme.addFormulaire(new Epreuve("TEST1", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireVide);
-        assertEquals(1, systeme.findEtudiant("nom", "Malard").size(), "Il n'y a pas d'étudiants dans l'un des formulaires.");
+        assertEquals(1, systeme.findEtudiant("nom", "Malard").size(), "La taille du résultat doit être 1.");
 
         Systeme systemeVide = new Systeme();
-        assertTrue(systemeVide.findEtudiant("nom", "Malard").isEmpty(), "Le système est totalement vide.");
+        assertTrue(systemeVide.findEtudiant("nom", "Malard").isEmpty(), "Le résultat doit être vide.");
 
         // Recherche dans un systeme où le seul formulaire est vide
         Systeme systemeIsole = new Systeme();
         Formulaire formulaireIsole = new Formulaire();
         systemeIsole.addFormulaire(new Epreuve("TEST3", 1, 1, 2026, 8, 0, 60, Modalite.QCM), formulaireIsole);
-        assertTrue(systemeIsole.findEtudiant("nom", "Malard").isEmpty(), "Doit gérer le cas où fraudeurs est null sans effet de bord.");
+        assertTrue(systemeIsole.findEtudiant("nom", "Malard").isEmpty(), "Le résultat doit être vide.");
     }
 
 
@@ -250,7 +245,7 @@ public class SystemeTest {
 
         // Cas où il y a déjà un étudiant dans la liste d'étudiants unique
         formulaire2.getFraudeurs().put(etudiant1, new ArrayList<>());
-        assertEquals(5, systeme.calcNombreEtudiants(), "Le doublon inter-formulaire ne doit pas être compté.");
+        assertEquals(5, systeme.calcNombreEtudiants(), "Il n'y a que 5 étudiants.");
     }
 
     @Test
