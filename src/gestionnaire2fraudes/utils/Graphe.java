@@ -4,30 +4,19 @@ package gestionnaire2fraudes.utils;
  * La classe Graphe represente un graphe.
  */
 
-class Graphe {
+public class Graphe {
 
     // attributs du graphe
 
-    int nombreSommets;		// nombre de sommets du graphe
-    boolean oriente;			// le graphe est-il oriente ou non ?
-    int[][] graphe;			// la matrice carree qui va contenir le graphe
+    int nombreSommets;     // nombre de sommets du graphe
+    boolean oriente;          // le graphe est-il oriente ou non ?
+    int[][] graphe;       // la matrice carree qui va contenir le graphe
     // les dimensions de la matrice : nombreSommets x nombreSommets
 
     /**
      * Initialise le graphe.
-     * 3 initialisations sont possibles :
-     * 	- à partir du graphe qui represente une maison (oriente)
-     * 	- à partir du graphe qui represente une maison (non oriente)
-     * 	- à partir du graphe oriente presente en cours qui possède 8 sommets (a ete utilise notamment lors
-     * 	  du parcours en profondeur)
-     *
-     * @param nom peut valoir au choix :
-     *			- "Graphe maison (oriente)"
-
-     * 		- "Graphe maison (non oriente)"
-     * 		- "Graphe du cours"
      */
-    Graphe(int nombreSommets, boolean oriente, int[][] graphe) {
+    public Graphe(int nombreSommets, boolean oriente, int[][] graphe) {
         this.nombreSommets = nombreSommets;
         this.oriente = oriente;
         this.graphe = graphe;
@@ -44,7 +33,7 @@ class Graphe {
      * @return le nombre de sommets du graphe
      */
 
-    int getNombreSommets () {
+    public int getNombreSommets () {
         return this.nombreSommets;
     }
 
@@ -54,7 +43,7 @@ class Graphe {
      * @return true si le graphe est orienté, false sinon.
      */
 
-    boolean getOriente () {
+    public boolean getOriente () {
         return this.oriente;
     }
 
@@ -64,7 +53,7 @@ class Graphe {
      * @return le graphe.
      */
 
-    int[][] getGraphe () {
+    public int[][] getGraphe () {
         return this.graphe;
     }
 
@@ -74,7 +63,7 @@ class Graphe {
      * puis le detail de la matrice qui contient le graphe.
      *
      */
-    void affiche() {
+    public void affiche() {
         if (this.getOriente())
             System.out.println ("- Graphe oriente.");
         else
@@ -120,7 +109,7 @@ class Graphe {
      * @param numeroSommet : le numero du sommet concerne
      * @return le nombre d'arcs entrants
      */
-    int calculeNombreArcsEntrants (int numeroSommet) {
+    public int calculeNombreArcsEntrants (int numeroSommet) {
         int nombreArcs = 0;
         for (int i = 0; i<this.getNombreSommets(); i++) {
             nombreArcs += this.graphe[i][numeroSommet];
@@ -137,7 +126,7 @@ class Graphe {
      * qui ne sont "aimées" de personne...
      *
      */
-    void afficheSources () {
+    public void afficheSources () {
         for (int i=0;i<this.getNombreSommets(); i++) {
             int arcsEntrants = calculeNombreArcsEntrants(i);
             if (arcsEntrants > 0){
@@ -156,7 +145,7 @@ class Graphe {
      * @return le nombre d'arcs sortants
      */
 
-    int calculeNombreArcsSortants (int numeroSommet) {
+    public int calculeNombreArcsSortants (int numeroSommet) {
         int nombreArcs = 0;
         for (int i = 0; i<this.getNombreSommets(); i++) {
             nombreArcs += this.graphe[numeroSommet][i];
@@ -175,7 +164,7 @@ class Graphe {
      *
      */
 
-    void affichePuits () {
+    public void affichePuits () {
         for (int i=0;i<this.getNombreSommets(); i++) {
             int arcsEntrants = calculeNombreArcsSortants(i);
             if (arcsEntrants > 0) {
@@ -193,7 +182,7 @@ class Graphe {
      */
 
 
-    void parcoursProfondeur(int numeroSommet, boolean[] marques) {
+    public void parcoursProfondeur(int numeroSommet, boolean[] marques) {
         marques[numeroSommet] = true;
         System.out.print(numeroSommet + " ");
 
@@ -216,7 +205,7 @@ class Graphe {
      * @return true si le sommet est atteignable, false sinon
      */
 
-    boolean sommetAtteignable(int numeroSommetDepart, int numeroSommetArrivee) {
+    public boolean sommetAtteignable(int numeroSommetDepart, int numeroSommetArrivee) {
         // à completer/modifier
 
         return false;
@@ -228,7 +217,7 @@ class Graphe {
      *
      * @return true si un circuit existe dans le graphe, false sinon.
      */
-    boolean circuitExiste(int numeroSommet, boolean[] marques, int sommetDepart) {
+    public boolean circuitExiste(int numeroSommet, boolean[] marques, int sommetDepart) {
         marques[numeroSommet] = true;
         System.out.print(numeroSommet + " ");
 
@@ -242,6 +231,68 @@ class Graphe {
         return false;
     }
 
+    public void ajouterSommet() {
+        int nouvelleTaille = this.nombreSommets + 1;
+        int[][] nouvelleMatrice = new int[nouvelleTaille][nouvelleTaille];
+
+        for (int i = 0; i < this.nombreSommets; i++) {
+            for (int j = 0; j < this.nombreSommets; j++) {
+                nouvelleMatrice[i][j] = this.graphe[i][j];
+            }
+        }
+
+        this.nombreSommets = nouvelleTaille;
+        this.graphe = nouvelleMatrice;
+    }
+
+    public void enleverSommet(int numeroSommet) {
+        if (numeroSommet < 0 || numeroSommet >= this.nombreSommets) {
+            return;
+        }
+
+        int nouvelleTaille = this.nombreSommets - 1;
+        int[][] nouvelleMatrice = new int[nouvelleTaille][nouvelleTaille];
+
+        int nouvelleLigne = 0;
+        for (int i = 0; i < this.nombreSommets; i++) {
+            if (i == numeroSommet) {
+                continue;
+            }
+
+            int nouvelleColonne = 0;
+            for (int j = 0; j < this.nombreSommets; j++) {
+                if (j == numeroSommet) {
+                    continue;
+                }
+
+                nouvelleMatrice[nouvelleLigne][nouvelleColonne] = this.graphe[i][j];
+                nouvelleColonne++;
+            }
+            nouvelleLigne++;
+        }
+
+        this.nombreSommets = nouvelleTaille;
+        this.graphe = nouvelleMatrice;
+    }
+
+    public void ajouterArc(int sommetDepart, int sommetArrivee) {
+        if ((sommetDepart >= 0 && sommetDepart < this.nombreSommets) && (sommetArrivee >= 0 && sommetArrivee < this.nombreSommets)) {
+            this.graphe[sommetDepart][sommetArrivee] = 1;
+
+            if (!this.oriente) {
+                this.graphe[sommetArrivee][sommetDepart] = 1;
+            }
+        }
+    }
+
+    public void enleverArc(int sommetDepart, int sommetArrivee) {
+        if ((sommetDepart >= 0 && sommetDepart < this.nombreSommets) && (sommetArrivee >= 0 && sommetArrivee < this.nombreSommets)) {
+            this.graphe[sommetDepart][sommetArrivee] = 0;
+
+            if (!this.oriente) {
+                this.graphe[sommetArrivee][sommetDepart] = 0;
+            }
+        }
+    }
+
 }
-
-
