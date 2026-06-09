@@ -46,6 +46,7 @@ public class VerifySystemeCLI {
         sys.addEpreuve(epreuveTest);
         sys.addEpreuve(epreuveAlgorithmique);
         sys.addEpreuve(epreuvePhysique);
+        sys.addEpreuve(epreuveDeep);
 
         sys.addFormulaire(epreuveTest, form1);
         sys.addFormulaire(epreuveAlgorithmique, form2);
