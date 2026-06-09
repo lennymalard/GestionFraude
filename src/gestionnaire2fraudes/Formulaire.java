@@ -87,14 +87,14 @@ public class Formulaire {
         str.append("Id : ");
         str.append(this.getId());
 
-        str.append(" Date création : ");
+        str.append(", Date création : ");
         str.append(this.getDateCreation().getDayOfMonth());
         str.append("/");
         str.append(this.getDateCreation().getMonthValue());
         str.append("/");
         str.append(this.getDateCreation().getYear());
 
-        str.append(" Date modification : ");
+        str.append(", Date modification : ");
         str.append(this.getDateModif().getDayOfMonth());
         str.append("/");
         str.append(this.getDateModif().getMonthValue());

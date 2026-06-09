@@ -17,4 +17,14 @@ public class FraudeIAGConnectee extends FraudeIAG {
     public void setIpUtilisee(String ipUtilisee) {
         this.ipUtilisee = ipUtilisee;
     }
+
+    @Override
+    public String toString() {
+        return "Fraude IAG connectee - " +
+                ", Date de relevé : " + this.getDateReleve() +
+                ", Contenu : " + this.getContenu() +
+                ", Description : " + this.getDescription() +
+                ", Nom du service : " + this.getNomService() +
+                ", IP Utilisee : " + ipUtilisee;
+    }
 }

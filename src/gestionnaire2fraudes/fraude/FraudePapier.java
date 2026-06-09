@@ -29,4 +29,11 @@ public class FraudePapier extends Fraude{
     public void setPlie(boolean plie) {
         this.plie = plie;
     }
+
+    @Override
+    public String toString() {
+        return "Fraude papier - " + super.toString() +
+                ", Dimensions : " + dimensions.getElement1() + "*" + dimensions.getElement2() +
+                ", Plie : " + plie;
+    }
 }

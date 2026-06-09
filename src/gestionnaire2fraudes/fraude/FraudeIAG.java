@@ -17,4 +17,10 @@ public class FraudeIAG extends Fraude {
     public void setNomService(String nomService) {
         this.nomService = nomService;
     }
+
+    @Override
+    public String toString() {
+        return "Fraude IAG - " + super.toString() +
+                ", Nom du service : " + nomService;
+    }
 }

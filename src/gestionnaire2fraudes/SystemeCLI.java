@@ -4,10 +4,7 @@ import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Epreuve;
 import gestionnaire2fraudes.cursus.Etudiant;
 import gestionnaire2fraudes.cursus.Modalite;
-import gestionnaire2fraudes.fraude.FraudeCalculatrice;
-import gestionnaire2fraudes.fraude.FraudeIAG;
-import gestionnaire2fraudes.fraude.FraudeIAGConnectee;
-import gestionnaire2fraudes.fraude.FraudePapier;
+import gestionnaire2fraudes.fraude.*;
 import gestionnaire2fraudes.utils.Tuple;
 
 import java.time.LocalDate;
@@ -168,6 +165,13 @@ public class SystemeCLI extends Systeme implements CLI{
                     forms = this.findFormulairesEtudiant(etu);
                     for(Formulaire form : forms){
                         display(form.toString());
+                        HashMap<Etudiant, ArrayList<Fraude>> fraudeEtu = form.getFraudeurs();
+                        for(Etudiant etudiant : fraudeEtu.keySet()){
+                            display("   " + etudiant.toString());
+                            for(Fraude fraude : fraudeEtu.get(etudiant)){
+                                display("       " + fraude.toString());
+                            }
+                        }
                     }
                     quitterRecherche = true;
                     break;
@@ -185,6 +189,7 @@ public class SystemeCLI extends Systeme implements CLI{
                 case 3:
                     display("Vous aller renseigner un étudiant");
                     etu = afficherTrouverEtudiant();
+                    display(etu.toString());
                     quitterRecherche = true;
                     break;
                 case 4:
@@ -227,8 +232,6 @@ public class SystemeCLI extends Systeme implements CLI{
             }
         }
     }
-
-
 
     private boolean containsNumber(String str) {
         if (str == null) return false;
@@ -293,9 +296,12 @@ public class SystemeCLI extends Systeme implements CLI{
         display("Voici la liste des formulaires que vous pouvez modifier.");
         int count = 0;
         for(Epreuve epreuve : epreuveForm.keySet()){
-            display(String.valueOf(count) + " : ");
-            display(epreuve.toString());
-            display(epreuveForm.get(epreuve).toString());
+            StringBuilder str = new StringBuilder();
+            str.append(count);
+            str.append(" : ");
+            str.append(epreuve.toString());
+            display(str.toString());
+            display("    " + epreuveForm.get(epreuve).toString());
             count++;
         }
         boolean choixFormulaire = false;
@@ -447,6 +453,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String programme = scanner.nextLine();
                         FraudeCalculatrice fraudeCalc = new FraudeCalculatrice(LocalDateTime.now(), contenu, description, marque, programme);
                         form.ajoutFraudeurs(etu, fraudeCalc);
+                        //ajout Fraudeur dans graphe
                         quitterSelFraude = true;
                         break;
                     case "2":
@@ -459,6 +466,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String nomService = scanner.nextLine();
                         FraudeIAG fraudeIag = new FraudeIAG(LocalDateTime.now(), contenu, description, nomService);
                         form.ajoutFraudeurs(etu, fraudeIag);
+                        //ajout Fraudeur dans graphe
                         quitterSelFraude = true;
                         break;
                     case "3":
@@ -473,6 +481,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String ip = scanner.nextLine();
                         FraudeIAGConnectee fraudeIagConn = new FraudeIAGConnectee(LocalDateTime.now(), contenu, description, nomServiceConnecte, ip);
                         form.ajoutFraudeurs(etu, fraudeIagConn);
+                        //ajout Fraudeur dans graphe
                         quitterSelFraude = true;
                         break;
                     case "4":
@@ -515,6 +524,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         }
                         FraudePapier fraudePapier = new FraudePapier(LocalDateTime.now(), contenu, description, new Tuple(longueur, largeur), papierPlie);
                         form.ajoutFraudeurs(etu, fraudePapier);
+                        //ajout Fraudeur dans graphe
                         quitterSelFraude = true;
                         break;
                     default:
@@ -676,7 +686,7 @@ public class SystemeCLI extends Systeme implements CLI{
         String prenomEtu = null;
         Cursus cursusEtu = null;
         boolean renseignerEtu = false;
-        while(renseignerEtu){
+        while(!renseignerEtu){
             boolean choixNomEtu = false;
             while(!choixNomEtu){
                 display("Quel est le nom de l'étudiant : ");

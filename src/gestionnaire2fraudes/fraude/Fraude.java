@@ -36,4 +36,11 @@ public abstract class Fraude {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return ", Date de relevé : " + dateReleve.getDayOfMonth() + "/" + dateReleve.getMonthValue() + "/" + dateReleve.getYear() +
+                ", Contenu : " + contenu +
+                ", Description : " + description;
+    }
 }

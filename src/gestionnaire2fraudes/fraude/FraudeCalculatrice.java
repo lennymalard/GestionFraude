@@ -27,4 +27,11 @@ public class FraudeCalculatrice extends Fraude{
     public void setProgramme(String programme) {
         this.programme = programme;
     }
+
+    @Override
+    public String toString() {
+        return "Fraude calculatrice - " + super.toString() +
+                ", Marque : " + marque +
+                ", Programme : " + programme;
+    }
 }

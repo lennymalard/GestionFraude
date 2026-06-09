@@ -24,6 +24,7 @@ public class VerifySystemeCLI {
         Epreuve epreuveTest = new Epreuve("MATH301", 2, 6, 2026, 8, 30, 90, Modalite.EXAMEN_ECRIT);
         Epreuve epreuveAlgorithmique = new Epreuve("ALGO302", 2, 6, 2026, 14, 0, 120, Modalite.ORDINATEUR);
         Epreuve epreuvePhysique = new Epreuve("PHYS401", 3, 6, 2026, 9, 0, 180, Modalite.EXAMEN_ECRIT);
+        Epreuve epreuveDeep = new Epreuve("DEEP", 9, 6, 2026, 8, 15, 240, Modalite.ORAL);
 
         // 4 Fraudes avec types différents
         FraudeCalculatrice fraudeCalc1 = new FraudeCalculatrice(LocalDateTime.now(), "Aide-mémoire", "Formules de Taylor", "TI", "Nspire");
