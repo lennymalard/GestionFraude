@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class SystemeCLI implements CLI{
+public class SystemeCLI extends Systeme implements CLI{
     //Intervalle de bonne valeur
     static String[] INTERVALCURSUS = {"E1", "E2", "E3e", "E3a", "E4", "E5"};
     static String[] INTERVALOUINON = {"o","n"};
