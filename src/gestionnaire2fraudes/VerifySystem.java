@@ -80,5 +80,14 @@ public class VerifySystem {
         systeme.findEtudiant("prenom", "malard");
         systeme.calcNombreEtudiants();
         systeme.calcNombreFraudes();
+
+        systeme.addFraudeurGraphe(etudiantTest);
+        systeme.addFraudeurGraphe(etudiant2);
+        systeme.addFraudeurGraphe(etudiant3);
+        systeme.addFraudeurGraphe(etudiant4);
+
+        systeme.lierFraudeursEpreuve();
+        systeme.afficherGraphe();
+        systeme.afficherLiensEtudiants();
     }
 }

@@ -20,6 +20,7 @@ public class Systeme {
         this.formulaires = new HashMap<>();
         this.epreuves = new ArrayList<>();
         this.graphe = new Graphe(0, false, new int[][]{});
+        this.etudiantIndiceMap = new HashMap<>();
     }
 
     public HashMap<Epreuve, Formulaire> getFormulaires() {
@@ -38,6 +39,22 @@ public class Systeme {
         this.epreuves = epreuves;
     }
 
+    public Graphe getGraphe() {
+        return graphe;
+    }
+
+    public void setGraphe(Graphe graphe) {
+        this.graphe = graphe;
+    }
+
+    public HashMap<Etudiant, Integer> getEtudiantIndiceMap() {
+        return etudiantIndiceMap;
+    }
+
+    public void setEtudiantIndiceMap(HashMap<Etudiant, Integer> etudiantIndiceMap) {
+        this.etudiantIndiceMap = etudiantIndiceMap;
+    }
+
     public void addFormulaire(Epreuve epreuve, Formulaire formulaire){
         formulaires.put(epreuve, formulaire);
     }
@@ -53,6 +70,8 @@ public class Systeme {
     public void removeEpreuve(Epreuve epreuve){
         epreuves.remove(epreuve);
     }
+
+
 
     public ArrayList<Formulaire> findFormulairesEtudiant(Etudiant etudiant) {
         ArrayList<Formulaire> formulairesConcernes = new ArrayList<>();
@@ -212,6 +231,36 @@ public class Systeme {
                 for (Etudiant etudiant2 : formulaire.getFraudeurs().keySet()) {
                     if (etudiant1.getId() < etudiant2.getId()) {
                         this.creerLienFraudeurs(etudiant1, etudiant2);
+                    }
+                }
+            }
+        }
+    }
+
+    public void afficherGraphe(){
+        System.out.println("=================== Graphe =================== ");
+        for (Map.Entry<Etudiant, Integer> entry : this.etudiantIndiceMap.entrySet()) {
+            Etudiant etudiant = entry.getKey();
+            Integer indice = entry.getValue();
+            System.out.println("Sommet " + indice + " : " + etudiant.getNom() + " " + etudiant.getPrenom() + " (ID: " + etudiant.getId() + ")");
+        }
+        System.out.println("==============================================\n");
+        this.graphe.affiche();
+        System.out.println("==============================================\n");
+    }
+
+    public void afficherLiensEtudiants() {
+        ArrayList<String> pairesAffichees = new ArrayList<>();
+
+        for (Formulaire formulaire : this.formulaires.values()) {
+            for (Etudiant etudiant1 : formulaire.getFraudeurs().keySet()) {
+                for (Etudiant etudiant2 : formulaire.getFraudeurs().keySet()) {
+                    if (etudiant1.getId() < etudiant2.getId()) {
+                        String paire = etudiant1.getId() + "-" + etudiant2.getId();
+                        if (!pairesAffichees.contains(paire)) {
+                            pairesAffichees.add(paire);
+                            System.out.println(etudiant1.getPrenom() + " " + etudiant1.getNom() + " <=> " + etudiant2.getPrenom() + " " + etudiant2.getNom());
+                        }
                     }
                 }
             }

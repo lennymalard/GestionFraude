@@ -7,6 +7,7 @@ import gestionnaire2fraudes.cursus.Modalite;
 import gestionnaire2fraudes.fraude.FraudeCalculatrice;
 import gestionnaire2fraudes.fraude.Fraude;
 import gestionnaire2fraudes.fraude.FraudeIAG;
+import gestionnaire2fraudes.utils.Graphe;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -273,4 +274,81 @@ public class SystemeTest {
         // Écart-type = (1 + 1) / 2 = 1
         assertEquals(1.0f, systeme.calcStdFraudesFormulaire(), 0.001, "L'écart-type du nombre de fraudes par formulaire est 1.0 .");
     }
+
+    @Test
+    public void testAddFraudeurGraphe() {
+        systeme.addFraudeurGraphe(etudiant1);
+
+        HashMap<Etudiant, Integer> map = systeme.getEtudiantIndiceMap();
+        Graphe graphe = systeme.getGraphe();
+
+        assertEquals(1, map.size(), "La taille du résultat doit être 1.");
+        assertEquals(1, graphe.getNombreSommets(), "Le nombre de sommets doit être 1.");
+        assertTrue(map.containsKey(etudiant1), "La hashmap doit contenir l'étudiant 1.");
+
+        systeme.addFraudeurGraphe(etudiant1);
+
+        assertEquals(1, map.size(), "La taille du résultat doit rester à 1 (après insertion doublon).");
+        assertEquals(1, graphe.getNombreSommets(), "Le nombre de sommets doit rester à 1 (après insertion doublon).");
+    }
+
+    @Test
+    public void testCreerLienFraudeurs() {
+        systeme.addFraudeurGraphe(etudiant1);
+        systeme.creerLienFraudeurs(etudiant1, etudiant2);
+
+        systeme.setGraphe(new Graphe(0, false, new int[][]{}));
+        systeme.setEtudiantIndiceMap(new HashMap<>());
+
+        systeme.addFraudeurGraphe(etudiant2);
+        systeme.creerLienFraudeurs(etudiant1, etudiant2);
+
+        systeme.setGraphe(new Graphe(0, false, new int[][]{}));
+        systeme.setEtudiantIndiceMap(new HashMap<>());
+
+        systeme.addFraudeurGraphe(etudiant1);
+        systeme.addFraudeurGraphe(etudiant2);
+        systeme.creerLienFraudeurs(etudiant1, etudiant2);
+
+        HashMap<Etudiant, Integer> map = systeme.getEtudiantIndiceMap();
+        Graphe graphe = systeme.getGraphe();
+
+        int index1 = map.get(etudiant1);
+        int index2 = map.get(etudiant2);
+
+        assertEquals(1, graphe.getGraphe()[index1][index2], "index1 vers index2 doit être à 1.");
+        assertEquals(1, graphe.getGraphe()[index2][index1], "index2 vers index1 doit être à 1.");
+
+    }
+
+    @Test
+    public void testLierFraudeursEpreuve() {
+        systeme.addFraudeurGraphe(etudiant1);
+        systeme.addFraudeurGraphe(etudiant2);
+        systeme.addFraudeurGraphe(etudiant3);
+        systeme.addFraudeurGraphe(etudiant4);
+        systeme.addFraudeurGraphe(etudiant5);
+
+        systeme.lierFraudeursEpreuve();
+
+        HashMap<Etudiant, Integer> map = systeme.getEtudiantIndiceMap();
+        Graphe graphe = systeme.getGraphe();
+
+        int[][] matrice = graphe.getGraphe();
+
+        int idEtudiant1 = map.get(etudiant1);
+        int idEtudiant4 = map.get(etudiant4);
+        assertEquals(1, matrice[idEtudiant1][idEtudiant4], "etudiant1 vers etudiant4 doit être à 1.");
+
+        int idEtudiant2 = map.get(etudiant2);
+        int idEtudiant3 = map.get(etudiant3);
+        int idEtudiant5 = map.get(etudiant5);
+        assertEquals(1, matrice[idEtudiant2][idEtudiant3], "etudiant2 vers etudiant3 doit être à 1.");
+        assertEquals(1, matrice[idEtudiant3][idEtudiant5], "etudiant3 vers etudiant5 doit être à 1.");
+        assertEquals(1, matrice[idEtudiant2][idEtudiant5], "etudiant2 vers etudiant5 doit être à 1.");
+
+        assertEquals(0, matrice[idEtudiant1][idEtudiant2], "etudiant1 vers etudiant2 doit être à 0.");
+        assertEquals(0, matrice[idEtudiant1][idEtudiant1], "etudiant1 vers etudiant1 doit être à 0.");
+    }
+
 }
