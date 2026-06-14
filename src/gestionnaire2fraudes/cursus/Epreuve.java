@@ -81,7 +81,7 @@ public class Epreuve {
 
         str.append(" Heure passage : ");
         str.append(this.getHeurePassage().getHour());
-        str.append(":");
+        str.append("h");
         str.append(this.getHeurePassage().getMinute());
 
         str.append(" Durée épreuve : ");

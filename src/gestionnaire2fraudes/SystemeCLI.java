@@ -14,6 +14,10 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * @brief Classe gérant l'interface en ligne de commande (CLI) du système de gestion des fraudes.
+ * @details Hérite de Systeme et implémente l'interface CLI pour l'interaction utilisateur.
+ */
 public class SystemeCLI extends Systeme implements CLI{
     //Intervalle de bonne valeur
     static String[] INTERVALCURSUS = {"E1", "E2", "E3e", "E3a", "E4", "E5"};
@@ -22,36 +26,47 @@ public class SystemeCLI extends Systeme implements CLI{
     String input;
     HashMap<Epreuve, Formulaire> epreuveForm = this.getFormulaires();
 
+    /**
+     * @brief Point d'entrée principal de l'application en mode console.
+     * @param args Arguments de la ligne de commande (non utilisés).
+     */
+    public static void main(String[] args){
+        SystemeCLI sys = new SystemeCLI();
+        sys.start();
+    }
 
+    /**
+     * @brief Démarre le système et affiche le menu principal.
+     */
     @Override
     public void start(){
         display("Démarrage du système. Veuillez patienter.");
-        isRunning();
+        afficheChoixMenuPrincipal();
     }
 
-    @Override
-    public void isRunning(){
-        display("Bienvenue dans le menu principal");
-        display("1 - Création d'un formulaire");
-        display("2 - Modification d'un formulaire");
-        display("3 - Recherche et analyse");
-        display("4 - Suppression d'un formulaire");
-        display("5 - Création d'une épreuve");
-        display("6 - Quitter le programme");
-        afficheMenuPrincipal();
-        stop();
-    }
-
+    /**
+     * @brief Arrête le système et affiche un message de fin.
+     */
     @Override
     public void stop(){
         display("Au revoir et à bientôt");
     }
 
+    /**
+     * @brief Affiche un message sur la sortie standard de la console.
+     * @param message Le texte à afficher.
+     */
     @Override
     public void display(String message){
         System.out.println(message);
     }
 
+    /**
+     * @brief Vérifie si la saisie utilisateur correspond à une valeur autorisée.
+     * @param input La chaîne de caractères saisie par l'utilisateur.
+     * @param bonInterval Tableau contenant les chaînes de caractères valides attendues.
+     * @return true si la saisie est valide, false sinon.
+     */
     private boolean rightInput(String input, String[] bonInterval){
         for (String s : bonInterval) {
             if (Objects.equals(input, s)) {
@@ -61,13 +76,32 @@ public class SystemeCLI extends Systeme implements CLI{
         return false;
     }
 
+    /**
+     * @brief Convertit la saisie textuelle de l'utilisateur en entier.
+     * @param input La chaîne de caractères à convertir.
+     * @return L'entier correspondant à la chaîne.
+     * @throws NumberFormatException Si la chaîne n'est pas un entier valide.
+     */
     private int rightInput(String input){
         return Integer.parseInt(input);
     }
 
-    private void afficheMenuPrincipal(){
+    /**
+     * @brief Gère la boucle interactive et l'affichage du menu principal de l'application.
+     */
+    @Override
+    public void afficheChoixMenuPrincipal(){
         boolean quitter = false;
         while(!quitter){
+            display("--------------------------------------");
+            display("Bienvenue dans le menu principal");
+            display("1 - Création d'un formulaire");
+            display("2 - Création d'une épreuve");
+            display("3 - Modification d'un formulaire");
+            display("4 - Suppression d'un formulaire");
+            display("5 - Recherche et analyse");
+            display("6 - Quitter le programme");
+
             int choix = 0;
             boolean choixMenuPrincipal = false;
 
@@ -90,31 +124,27 @@ public class SystemeCLI extends Systeme implements CLI{
                 case 1:
                     display("Vous allez créer un formulaire");
                     afficherCreationFormulaire();
-                    isRunning();
                     break;
                 case 2:
-                    display("Vous allez modifier un formulaire");
-                    afficherModifierFormulaire();
-                    isRunning();
+                    display("Vous allez créer une épreuve");
+                    afficherCreationEpreuve();
                     break;
                 case 3:
-                    display("Vous allez rechercher ou analyser");
-                    afficheMenuRecherche();
-                    isRunning();
+                    display("Vous allez modifier un formulaire");
+                    afficherModifierFormulaire();
                     break;
                 case 4:
                     display("Vous allez supprimer un formulaire");
                     afficherSupprimerFormulaire();
-                    isRunning();
                     break;
                 case 5:
-                    display("Vous allez créer une épreuve");
-                    afficherCreationEpreuve();
-                    isRunning();
+                    display("Vous allez rechercher ou analyser");
+                    afficheMenuRecherche();
                     break;
                 case 6:
                     display("Vous quittez le programme");
                     quitter = true;
+                    stop();
                     break;
                 default:
                     break;
@@ -122,6 +152,9 @@ public class SystemeCLI extends Systeme implements CLI{
         }
     }
 
+    /**
+     * @brief Gère la boucle interactive et l'affichage du sous-menu de recherche et statistiques.
+     */
     private void afficheMenuRecherche(){
         boolean quitterRecherche = false;
         while(!quitterRecherche){
@@ -134,6 +167,7 @@ public class SystemeCLI extends Systeme implements CLI{
             display("6 - Nombre total de fraudes enregistré dans le système");
             display("7 - Moyenne de fraude par formulaire");
             display("8 - Écart type de fraude par formulaire");
+            display("9 - Afficher les liens entre les étudiants qui ont trichés");
 
             int choix = 0;
             boolean choixMenuRecherche = false;
@@ -143,10 +177,10 @@ public class SystemeCLI extends Systeme implements CLI{
                 input = scanner.nextLine().trim();
                 try{
                     choix = rightInput(input);
-                    if (choix >= 1 && choix <= 8) {
+                    if (choix >= 1 && choix <= 9) {
                         choixMenuRecherche = true;
                     } else {
-                        display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 8.");
+                        display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 9.");
                     }
 
                 } catch (NumberFormatException e) {
@@ -154,6 +188,7 @@ public class SystemeCLI extends Systeme implements CLI{
                 }
             }
             ArrayList<Formulaire> forms;
+            ArrayList<Etudiant> listeEtu;
             Etudiant etu;
             StringBuilder str;
             switch(choix){
@@ -187,9 +222,39 @@ public class SystemeCLI extends Systeme implements CLI{
                     quitterRecherche = true;
                     break;
                 case 3:
-                    display("Vous aller renseigner un étudiant");
-                    etu = afficherTrouverEtudiant();
-                    display(etu.toString());
+                    boolean choixRechercheEtudiant = false;
+                    display("Par quel moyen voulez vous rechercher un étudiant ");
+                    display("1 - Par nom");
+                    display("2 - Par prénom");
+                    display("3 - Par numéro apprenant");
+                    while(!choixRechercheEtudiant){
+                        display("Entrez votre choix : ");
+                        input = scanner.nextLine().trim();
+                        try{
+                            choix = rightInput(input);
+                            if (choix >= 1 && choix <= 3) {
+                                choixRechercheEtudiant = true;
+                            } else {
+                                display("Entrée non acceptée, veuillez réessayer avec un chiffre entre 1 et 3.");
+                            }
+
+                        } catch (NumberFormatException e) {
+                            display("Entrée non acceptée, veuillez réessayer avec un chiffre valide.");
+                        }
+                    }
+                    switch (choix) {
+                        case 1:
+                            rechercherParCritereTexte("nom", "Quel est le nom de l'étudiant : ");
+                            break;
+                        case 2:
+                            rechercherParCritereTexte("prenom", "Quel est le prénom de l'étudiant : ");
+                            break;
+                        case 3:
+                            rechercherParNumeroApprenant();
+                            break;
+                        default:
+                            break;
+                    }
                     quitterRecherche = true;
                     break;
                 case 4:
@@ -222,9 +287,13 @@ public class SystemeCLI extends Systeme implements CLI{
                     break;
                 case 8:
                     double ecartTypeFraudeForm = this.calcStdFraudesFormulaire();
-                    str = new StringBuilder("Le nombre total d'étudiant enregistré dans le système est de ");
+                    str = new StringBuilder("L'écart type du nombre de fraude par formulaire est de ");
                     str.append(ecartTypeFraudeForm);
                     display(str.toString());
+                    quitterRecherche = true;
+                    break;
+                case 9:
+                    this.afficherLiensEtudiants();
                     quitterRecherche = true;
                     break;
                 default:
@@ -233,6 +302,11 @@ public class SystemeCLI extends Systeme implements CLI{
         }
     }
 
+    /**
+     * @brief Vérifie si une chaîne de caractères contient au moins un chiffre numérique.
+     * @param str La chaîne de caractères à vérifier.
+     * @return true si la chaîne contient un chiffre, false sinon ou si la chaîne est nulle.
+     */
     private boolean containsNumber(String str) {
         if (str == null) return false;
         for (char c : str.toCharArray()) {
@@ -243,6 +317,11 @@ public class SystemeCLI extends Systeme implements CLI{
         return false;
     }
 
+    /**
+     * @brief Vérifie si une chaîne de caractères est uniquement composée de chiffres.
+     * @param str La chaîne de caractères à vérifier.
+     * @return true si la chaîne ne contient que des chiffres, false sinon ou si la chaîne est nulle.
+     */
     private boolean onlyNumber(String str){
         if (str == null) return false;
         for (char c : str.toCharArray()) {
@@ -253,6 +332,10 @@ public class SystemeCLI extends Systeme implements CLI{
         return true;
     }
 
+    /**
+     * @brief Guide l'utilisateur dans l'interface interactive pour créer un nouveau formulaire de fraude.
+     * @details Propose une liste des épreuves existantes, crée le formulaire et y associe un ou plusieurs fraudeurs.
+     */
     private void afficherCreationFormulaire(){
         Formulaire form = null;
         ArrayList<Epreuve> epreuves = this.getEpreuves();
@@ -272,6 +355,7 @@ public class SystemeCLI extends Systeme implements CLI{
                 choix = rightInput(input);
                 if (choix >= 0 && choix < epreuves.size()) {
                     choixEpreuve = true;
+                    epreuveForm = this.getFormulaires();
                     if(epreuveForm.containsKey(epreuves.get(choix))){
                         display("Cette épreuve à déjà un formulaire, veuillez réessayer.");
                         choixEpreuve = false;
@@ -289,12 +373,16 @@ public class SystemeCLI extends Systeme implements CLI{
         display("Formulaire créer");
     }
 
+    /**
+     * @brief Guide l'utilisateur pour modifier un formulaire de fraude existant en lui rajoutant des fraudeurs.
+     */
     private void afficherModifierFormulaire(){
 
         Formulaire formAModif = null;
 
         display("Voici la liste des formulaires que vous pouvez modifier.");
         int count = 0;
+        epreuveForm = this.getFormulaires();
         for(Epreuve epreuve : epreuveForm.keySet()){
             StringBuilder str = new StringBuilder();
             str.append(count);
@@ -333,9 +421,13 @@ public class SystemeCLI extends Systeme implements CLI{
         display("Formulaire modifier");
     }
 
+    /**
+     * @brief Guide l'utilisateur pour supprimer un formulaire de fraude du système.
+     */
     private void afficherSupprimerFormulaire(){
         display("Voici la liste des formulaires que vous pouvez supprimer.");
         int count = 0;
+        epreuveForm = this.getFormulaires();
         for(Epreuve epreuve : epreuveForm.keySet()){
             display(String.valueOf(count) + " : ");
             display(epreuve.toString());
@@ -369,6 +461,11 @@ public class SystemeCLI extends Systeme implements CLI{
         display("Formulaire supprimer");
     }
 
+    /**
+     * @brief Gère la saisie interactive des informations d'un fraudeur et du type de fraude commise.
+     * @details Permet d'enregistrer des cas de fraude de type : Calculatrice, IAG, IAG Connectée, ou Papier, et de les ajouter au formulaire fourni.
+     * @param form Le formulaire auquel la fraude et l'étudiant doivent être rattachés.
+     */
     public void afficherAjouterFraudeur(Formulaire form){
         String nomEtu = null;
         String prenomEtu = null;
@@ -453,7 +550,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String programme = scanner.nextLine();
                         FraudeCalculatrice fraudeCalc = new FraudeCalculatrice(LocalDateTime.now(), contenu, description, marque, programme);
                         form.ajoutFraudeurs(etu, fraudeCalc);
-                        //ajout Fraudeur dans graphe
+                        this.addFraudeurGraphe(etu);
                         quitterSelFraude = true;
                         break;
                     case "2":
@@ -466,7 +563,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String nomService = scanner.nextLine();
                         FraudeIAG fraudeIag = new FraudeIAG(LocalDateTime.now(), contenu, description, nomService);
                         form.ajoutFraudeurs(etu, fraudeIag);
-                        //ajout Fraudeur dans graphe
+                        this.addFraudeurGraphe(etu);
                         quitterSelFraude = true;
                         break;
                     case "3":
@@ -481,7 +578,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         String ip = scanner.nextLine();
                         FraudeIAGConnectee fraudeIagConn = new FraudeIAGConnectee(LocalDateTime.now(), contenu, description, nomServiceConnecte, ip);
                         form.ajoutFraudeurs(etu, fraudeIagConn);
-                        //ajout Fraudeur dans graphe
+                        this.addFraudeurGraphe(etu);
                         quitterSelFraude = true;
                         break;
                     case "4":
@@ -495,7 +592,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         boolean choixLongueurPapier = false;
                         while(!choixLongueurPapier){
                             longueur = scanner.nextLine().trim();
-                            if(!onlyNumber(longueur)){
+                            if(onlyNumber(longueur)){
                                 display("Entrée non accepté, veuillez réessayer");
                             }else{
                                 choixLongueurPapier = true;
@@ -506,7 +603,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         boolean choixLargeurPapier = false;
                         while(!choixLargeurPapier){
                             largeur = scanner.nextLine().trim();
-                            if(!onlyNumber(largeur)){
+                            if(onlyNumber(largeur)){
                                 display("Entrée non accepté, veuillez réessayer");
                             }else{
                                 choixLargeurPapier = true;
@@ -524,7 +621,7 @@ public class SystemeCLI extends Systeme implements CLI{
                         }
                         FraudePapier fraudePapier = new FraudePapier(LocalDateTime.now(), contenu, description, new Tuple(longueur, largeur), papierPlie);
                         form.ajoutFraudeurs(etu, fraudePapier);
-                        //ajout Fraudeur dans graphe
+                        this.addFraudeurGraphe(etu);
                         quitterSelFraude = true;
                         break;
                     default:
@@ -547,6 +644,10 @@ public class SystemeCLI extends Systeme implements CLI{
         }
     }
 
+    /**
+     * @brief Guide l'utilisateur pas à pas pour créer et configurer une nouvelle épreuve.
+     * @details Demande la saisie contrôlée du code UCUE, de la date, de l'heure, de la durée ainsi que de la modalité.
+     */
     public void afficherCreationEpreuve(){
         display("Entrez un code UCUE : ");
         String codeUcue = scanner.nextLine().trim();
@@ -680,6 +781,10 @@ public class SystemeCLI extends Systeme implements CLI{
         display("L'épreuve a bien été créé");
     }
 
+    /**
+     * @brief Permet de saisir l'identité et le cursus d'un étudiant pour le localiser ou le générer.
+     * @return L'objet Etudiant configuré d'après les saisies utilisateur.
+     */
     public Etudiant afficherTrouverEtudiant(){
         Etudiant etu = null;
         String nomEtu = null;
@@ -730,6 +835,11 @@ public class SystemeCLI extends Systeme implements CLI{
         return etu;
     }
 
+    /**
+     * @brief Guide l'utilisateur dans la sélection d'une épreuve existante possédant un formulaire.
+     * @details Affiche la liste des épreuves et force une sélection numérique valide d'une épreuve présente dans les formulaires enregistrés.
+     * @return L'objet Epreuve sélectionné par l'utilisateur.
+     */
     public Epreuve afficherTrouverEpreuve(){
         ArrayList<Epreuve> epreuves = this.getEpreuves();
         for(int i = 0; i < epreuves.size(); i++){
@@ -753,12 +863,73 @@ public class SystemeCLI extends Systeme implements CLI{
             }catch(NumberFormatException e){
                 display("Entrée non acceptée, veuillez réessayer avec un chiffre");
             }
+            epreuveForm = this.getFormulaires();
             if(!epreuveForm.containsKey(epreuves.get(choix))){
                 display("Cette épreuve n'a pas de formulaire associé, veuillez réessayer.");
                 choixEpreuve = false;
             }
         }
         return epreuves.get(Integer.parseInt(input));
+    }
+
+    /**
+     * @brief Gère la recherche textuelle (Nom ou Prénom) d'un étudiant.
+     * @details Effectue une saisie contrôlée pour s'assurer de l'absence de chiffres, lance la recherche selon le critère spécifié et affiche les correspondances.
+     * @param critere Le type de critère textuel utilisé pour la recherche (ex: "nom" ou "prenom").
+     * @param messagePrompt Le message d'invite de commande personnalisé à afficher à l'utilisateur.
+     */
+    private void rechercherParCritereTexte(String critere, String messagePrompt) {
+        String saisie = null;
+        boolean choixValide = false;
+
+        while (!choixValide) {
+            display(messagePrompt);
+            saisie = scanner.nextLine().trim();
+
+            if (containsNumber(saisie) || saisie.isEmpty()) {
+                display("Entrée non acceptée, veuillez réessayer sans chiffre.");
+            } else {
+                choixValide = true;
+            }
+        }
+
+        ArrayList<Etudiant> listeEtu = this.findEtudiant(critere, saisie);
+
+        if (listeEtu != null && !listeEtu.isEmpty()) {
+            for (Etudiant etudiant : listeEtu) {
+                display(etudiant.toString());
+            }
+        } else {
+            display("Il n'existe pas d'élève avec le " + critere + " " + saisie);
+        }
+    }
+
+    /**
+     * @brief Gère la recherche d'un étudiant via son numéro unique d'apprenant.
+     * @details Contrôle que la saisie est purement numérique, exécute la recherche par identifiant unique et affiche l'étudiant s'il est trouvé.
+     */
+    private void rechercherParNumeroApprenant() {
+        int numeroEtu = -1;
+        boolean choixNumeroEtu = false;
+
+        while (!choixNumeroEtu) {
+            display("Quel est le numéro apprenant de l'étudiant : ");
+            String input = scanner.nextLine().trim();
+            try {
+                numeroEtu = Integer.parseInt(input);
+                choixNumeroEtu = true;
+            } catch (NumberFormatException e) {
+                display("Entrée non acceptée, veuillez réessayer avec un chiffre.");
+            }
+        }
+
+        Etudiant etu = this.findEtudiant(numeroEtu);
+
+        if (etu != null) {
+            display(etu.toString());
+        } else {
+            display("Il n'existe pas d'élève avec le numéro apprenant " + numeroEtu);
+        }
     }
 }
 

@@ -66,10 +66,10 @@ public class Etudiant {
         str.append(" ");
         str.append(this.getPrenom());
 
-        str.append("; Cursus : ");
+        str.append(", Cursus : ");
         str.append(this.getCursus());
 
-        str.append("; Id : ");
+        str.append(", Id : ");
         str.append(this.getId());
         return str.toString();
     }
