@@ -1,6 +1,5 @@
 package gestionnaire2fraudes;
 
-import gestionnaire2fraudes.Systeme;
 import gestionnaire2fraudes.cursus.Cursus;
 import gestionnaire2fraudes.cursus.Epreuve;
 import gestionnaire2fraudes.cursus.Etudiant;
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class VerifySystem {
+public class VerifySysteme {
 
 
     public static void main(String[] args) {
